@@ -2,11 +2,11 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { bindMethodToSelfByName, object_entries } from "../deps.ts"
-import { HyperScope } from "../mod.ts"
-import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "../signal.ts"
+import { bindMethodToSelfByName, object_entries } from "../../src/deps.ts"
+import { HyperScope } from "../../src/mod.ts"
+import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "../../src/signal.ts"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
-export { Fragment } from "../mod.ts"
+export { Fragment } from "../../src/mod.ts"
 
 export const
 	ctx = new Context(),

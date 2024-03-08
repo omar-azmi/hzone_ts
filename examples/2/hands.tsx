@@ -1,6 +1,6 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
-import { ComponentGenerator } from "../mod.ts"
+import { ComponentGenerator } from "../../src/mod.ts"
 import { Accessor, Fragment, h, stringify } from "./deps.ts"
 
 type HandProps = {

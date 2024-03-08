@@ -1,6 +1,6 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
-import { ATTRS, AttrProps, EVENTS, EventProps } from "../mod.ts"
+import { ATTRS, AttrProps, EVENTS, EventProps } from "../../src/mod.ts"
 import { Clock } from "./clock.tsx"
 import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, stringify } from "./deps.ts"
 

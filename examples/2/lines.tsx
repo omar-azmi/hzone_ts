@@ -1,6 +1,6 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
-import { ATTRS, FragmentComponentGenerator } from "../mod.ts"
+import { ATTRS, FragmentComponentGenerator } from "../../src/mod.ts"
 import { Fragment, h } from "./deps.ts"
 import { Hand } from "./hands.tsx"
 

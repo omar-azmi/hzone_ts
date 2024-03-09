@@ -60,7 +60,7 @@ export const ReactiveComponent_Render_Factory = (ctx: Context) => {
 				}, { defer: false })
 				return text
 			}
-			return stringify(child) ?? ""
+			return child instanceof Node ? child : stringify(child) ?? ""
 		}
 	}
 }

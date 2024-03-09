@@ -1,7 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 import { ComponentGenerator } from "../../src/mod.ts"
-import { Accessor, Fragment, h, stringify } from "./deps.ts"
+import { Accessor, Fragment, h } from "./deps.ts"
 
 type HandProps = {
 	rotate: string | Accessor<string>
@@ -13,8 +13,8 @@ type HandProps = {
 export const Hand: ComponentGenerator<HandProps> = (props: HandProps) => {
 	const { rotate, length, width, fixed } = props
 	return <line
-		y1={stringify(fixed ? length - 95 : undefined) ?? "0"}
-		y2={stringify(-(fixed ? 95 : length)) ?? "0"}
+		y1={fixed ? length - 95 : 0}
+		y2={-(fixed ? 95 : length)}
 		stroke="currentColor"
 		stroke-width={width}
 		stroke-linecap="round"

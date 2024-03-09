@@ -5,8 +5,10 @@ import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsi
 import { bindMethodToSelfByName, object_entries } from "../../src/deps.ts"
 import { HyperScope } from "../../src/mod.ts"
 import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "../../src/signal.ts"
+export { throttlingEquals } from "jsr:@oazmi/tsignal"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
 export { Fragment } from "../../src/mod.ts"
+
 
 export const
 	ctx = new Context(),
@@ -34,11 +36,6 @@ export const
 
 export const h = bindMethodToSelfByName(hyperscope, "h")
 export const { pushScope, popScope } = hyperscope
-
-export const stringify = (value: any): string | null => {
-	const is_null = value === null || value === undefined
-	return is_null ? null : value.toString()
-}
 
 export const object_to_css_inline_style = (style: Record<string, string> = {}): string => {
 	return object_entries(style)

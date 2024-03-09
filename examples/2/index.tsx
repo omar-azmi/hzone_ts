@@ -1,8 +1,9 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
+import { stringifyAttrValue } from "../../src/funcdefs.ts"
 import { ATTRS, AttrProps, EVENTS, EventProps } from "../../src/mod.ts"
 import { Clock } from "./clock.tsx"
-import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, stringify } from "./deps.ts"
+import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, throttlingEquals } from "./deps.ts"
 
 let seconds_since_epoch_and_midnight = new Date().setHours(0, 0, 0, 0) / 1000
 const getSecondsSinceMidnight = (): number => Date.now() / 1000 - seconds_since_epoch_and_midnight
@@ -54,14 +55,15 @@ const slow_down_time = <div style={object_to_css_inline_style({
 </div>
 
 let time_input_element_is_focused = false
-const time_input_element: HTMLInputElement = <input type="number" value={createMemo((id) => getTime(id), {
-	equals: (v1, v2) => {
+const time_input_element: HTMLInputElement = <input type="number" value={createMemo(getTime, {
+	equals: throttlingEquals<number>(150, (v1, v2) => {
 		const is_equal = v1 === v2
 		if (!is_equal && isFinite(v2) && !time_input_element_is_focused && time_input_element) {
-			time_input_element.value = stringify(v2)!
+			time_input_element.value = stringifyAttrValue(v2)!
+			return true
 		}
-		return is_equal
-	}
+		return false
+	})
 })[1]} {...{
 	[EVENTS]: {
 		change(event) {
@@ -71,7 +73,6 @@ const time_input_element: HTMLInputElement = <input type="number" value={createM
 				seconds = input_element.valueAsNumber
 			if (isFinite(seconds)) {
 				seconds_since_epoch_and_midnight = Date.now() / 1000 - seconds
-				// setCurrentTime()
 			}
 		},
 		blur(event) { time_input_element_is_focused = false },

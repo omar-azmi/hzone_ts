@@ -11,4 +11,3 @@ export const enum DEBUG {
 
 export type KeysOf<R> = keyof R
 export type ValuesOf<R> = R[keyof R]
-export type Stringifyable = { toString(): string }

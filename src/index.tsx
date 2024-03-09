@@ -40,7 +40,7 @@ const MyDiv = ({ width = 100, height = 50 } = {}) => {
 		<span>World</span>
 		{pushScope(SVG_SCOPE)}
 		<svg width={`${width}px`} height={`${height}px`} viewBox={`0 0 ${width} ${height}`}><g>
-			<text text-anchor="left" y={`${height / 2}`}>NOICEEE SVG!</text>
+			<text text-anchor="left" y={height / 2}>NOICEEE SVG!</text>
 		</g></svg>
 		{popScope()}
 		<>

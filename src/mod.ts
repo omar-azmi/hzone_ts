@@ -67,6 +67,8 @@
 */
 
 import { ConstructorOf, array_isArray, bind_array_pop, bind_array_push, bind_map_get, bind_stack_seek, console_error, isFunction, object_entries } from "./deps.ts"
+import { is_nullable, stringifyAttrValue } from "./funcdefs.ts"
+import { AttrValue } from "./typedefs.ts"
 
 
 export type RenderKind = symbol
@@ -136,21 +138,29 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 		return component_node
 	}
 
-	protected addAttr(element: Element, attribute_node: Attr): void
-	protected addAttr(element: Element, attribute_name: string, attribute_value: any): void
-	protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void
-	protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void {
+	protected addAttr(element: Element, attribute_node: Attr, attribute_value?: AttrValue): Attr
+	protected addAttr(element: Element, attribute_name: string, attribute_value?: AttrValue): Attr
+	protected addAttr(element: Element, attribute: Attr | string, value?: AttrValue): Attr {
 		const
-			existing_node = attribute instanceof Attr,
-			attr = existing_node ? attribute : document.createAttribute(attribute)
-		attr.nodeValue = attribute_value
-		if (!existing_node) {
-			// we only add the attribute if it was not an existing node.
-			// this is because if it was the child of a different element, then this would cause a DOM error.
-			// therefore, it is up to the creator of the attribute_node to handle appending it to the desired element.
+			is_existing_node = attribute instanceof Attr,
+			attr_value = stringifyAttrValue(value),
+			attr_value_is_null = is_nullable(attr_value),
+			attr: Attr = is_existing_node
+				? attribute
+				: (
+					element.setAttribute(attribute, attr_value ?? ""),
+					element.getAttributeNode(attribute)!
+				)
+		if (is_existing_node && !attr_value_is_null) {
+			attr.nodeValue = attr_value
 			element.setAttributeNode(attr)
 		}
-		// element.setAttribute(attribute_name, attribute_value) // equivalent shorter code. but not sure if I should use it
+		if (attr_value_is_null) {
+			// if the `value` was falsy (`AttrFalsy`), we immediately detach the attribute node that was just added.
+			element.removeAttributeNode(attr)
+			attr.nodeValue = attr_value
+		}
+		return attr
 	}
 
 	protected addEvent(
@@ -165,6 +175,8 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 	protected processChild(child: string | Node): string | Node {
 		return child
 	}
+
+	// TODO: add an `onDispose` or `onDelete` overridable method. and maybe also add `onInit` overridable method.
 }
 
 export const normalizeElementProps = (props?: null | Props<AttrProps>): Props<{}> => {
@@ -191,32 +203,18 @@ export class HTMLElement_Render extends Component_Render<typeof HTMLTagComponent
 	}
 }
 
-export const
-	svg_case_sensitive_attrs = ["viewBox", "preserveAspectRatio", "xmlns"],
-	svg_case_sensitive_attrs_lower = svg_case_sensitive_attrs.map((attr_name) => attr_name.toLowerCase())
 export const SVGTagComponent = <TAG extends keyof SVGElementTagNameMap = any>(props?: Props<{ tag?: TAG }>): SVGElementTagNameMap[TAG] => document.createElementNS("http://www.w3.org/2000/svg", props!.tag!)
+
+/**
+ * > [!IMPORTANT]
+ * > note that svg attributes are case sensitive, most notably the "viewBox" and "preserveAspectRatio" attributes must have the exact casing.
+*/
 export class SVGElement_Render extends Component_Render<typeof SVGTagComponent> {
 	test(tag: any, props?: any): boolean { return typeof tag === "string" }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 	h<TAG extends keyof SVGElementTagNameMap>(tag: TAG, props?: null | Props<AttrProps>, ...children: (string | Node)[]): SVGElementTagNameMap[TAG] {
 		return super.h(SVGTagComponent, { tag, ...normalizeElementProps(props) }, ...children) as SVGElementTagNameMap[TAG]
-	}
-
-	protected addAttr(element: Element, attribute_node: Attr): void
-	protected addAttr(element: Element, attribute_name: string, attribute_value: any): void
-	protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void
-	protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void {
-		// svg attributes are case sensitive, most notably the "viewBox" and "preserveAspectRatio" attributes must have the exact casing.
-		// unfortunately, when we create attribute nodes using `document.createAttribute(attribute_name)`, like done in the super method,
-		// we lose the original casing, and everything becomes lower cased. so, we must instead use
-		//`element.setAttribute(attribute_name, attribute_value)` to preserve the original case.
-		const case_sensitive_attr_name_index = attribute instanceof Attr ? -1 : svg_case_sensitive_attrs_lower.indexOf(attribute)
-		if (case_sensitive_attr_name_index >= 0) {
-			element.setAttribute(svg_case_sensitive_attrs[case_sensitive_attr_name_index], attribute_value)
-		} else {
-			super.addAttr(element, attribute, attribute_value)
-		}
 	}
 }
 

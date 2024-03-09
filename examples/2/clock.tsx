@@ -18,7 +18,7 @@ export const ClockFace: ComponentGenerator<ClockFaceProps> = (props: ClockFacePr
 	const element = <svg viewBox="0 0 200 200" width="30vmin">
 		<g transform="translate(100, 100)">
 			{/* static */}
-			<circle class="text-neutral-900" r="99" fill="white" stroke="currentColor" />
+			<circle class="text-neutral-900" r={99} fill="white" stroke="currentColor" />
 			<Lines numberOfLines={60} class="subsecond" length={2} width={1} />
 			<Lines numberOfLines={12} class="hour" length={5} width={2} />
 			{/* dynamic */}

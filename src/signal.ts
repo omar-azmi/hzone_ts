@@ -1,47 +1,55 @@
 import { Accessor, Context, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
 import { isFunction } from "./deps.ts"
-import { ComponentGenerator, Component_Render, Fragment, FragmentTagComponent, HTMLTagComponent, Props, SVGTagComponent, normalizeElementProps, svg_case_sensitive_attrs, svg_case_sensitive_attrs_lower } from "./mod.ts"
+import { stringify, stringifyAttrValue } from "./funcdefs.ts"
+import { ComponentGenerator, Component_Render, Fragment, FragmentTagComponent, HTMLTagComponent, Props, SVGTagComponent, normalizeElementProps } from "./mod.ts"
+import { AttrValue, TextValue } from "./typedefs.ts"
 
-const stringify = (value: any): string | null => {
-	const is_null = value === null || value === undefined
-	return is_null ? null : value.toString()
-}
 
-const isAccessor = isFunction as ((obj: any) => obj is Accessor<any>)
+export type MaybeAccessor<T> = T | Accessor<T>
+const
+	isAccessor_AttrValue = isFunction as ((obj: any) => obj is Accessor<AttrValue>),
+	isAccessor_TextValue = isFunction as ((obj: any) => obj is Accessor<TextValue>)
+
 
 export const ReactiveComponent_Render_Factory = (ctx: Context) => {
 	const createEffect = ctx.addClass(EffectSignal_Factory)
 
 	return class ReactiveComponent_Render<G extends ComponentGenerator = ComponentGenerator> extends Component_Render<G> {
-		protected addAttr(element: Element, attribute_node: Attr): void
-		protected addAttr(element: Element, attribute_name: string, attribute_value: any): void
-		protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void
-		protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void {
+		protected addAttr(element: Element, attribute_node: Attr, attribute_value?: MaybeAccessor<AttrValue>): Attr
+		protected addAttr(element: Element, attribute_name: string, attribute_value?: MaybeAccessor<AttrValue>): Attr
+		protected addAttr(element: Element, attribute: Attr | string, value?: MaybeAccessor<AttrValue>): Attr {
 			const
-				existing_node = attribute instanceof Attr,
-				attr = existing_node ? attribute : document.createAttribute(attribute)
-			if (isAccessor(attribute_value)) {
-				// let first_time = true
+				value_is_accessor = isAccessor_AttrValue(value),
+				initial_value = value_is_accessor ? value() : value
+			const attr = super.addAttr(element, attribute as any, initial_value)
+			if (value_is_accessor) {
 				createEffect((id) => {
 					const
 						old_value = attr.nodeValue,
-						new_value = attribute_value(id)
-					attr.nodeValue = stringify(new_value)
-					if (new_value === null && old_value !== null) {
-						(attr.ownerElement ?? element).removeAttributeNode(attr)
-					} else if (new_value !== null && !attr.ownerElement) {
-						element.setAttributeNode(attr)
+						new_value = stringifyAttrValue(value(id)),
+						value_has_changed = new_value !== old_value
+					if (value_has_changed || id) {
+						if (!new_value) {
+							// the attribute must be detached from its current parent (`ownerElement`), as its value has changed to `null`.
+							(attr.ownerElement ?? element).removeAttributeNode(attr)
+						} else if (!old_value) {
+							// the attribute must be rettached, as its value is no longer a `null`.
+							// but we also make sure that the attribute node does not already have a parent.
+							// TODO: consider the consequences of not reattaching attribute if it already has a parent,
+							//       instead of kicking it out of its current parent, and appending it to the original `element` parent.
+							attr.nodeValue = new_value
+							element.setAttributeNode(attr)
+						}
+						attr.nodeValue = new_value
 					}
-					return new_value === old_value
+					return !value_has_changed
 				}, { defer: false })
-				// element.setAttributeNode(attr) // this is redundant, since the attribute starts with a `null` value
-			} else {
-				super.addAttr(element, attribute, attribute_value)
 			}
+			return attr
 		}
 
-		protected processChild(child: Accessor<any> | string | Node): string | Node {
-			if (isAccessor(child)) {
+		protected processChild(child: MaybeAccessor<TextValue> | Node): string | Node {
+			if (isAccessor_TextValue(child)) {
 				const text = document.createTextNode("")
 				createEffect((id) => {
 					const
@@ -52,7 +60,7 @@ export const ReactiveComponent_Render_Factory = (ctx: Context) => {
 				}, { defer: false })
 				return text
 			}
-			return child
+			return stringify(child) ?? ""
 		}
 	}
 }
@@ -68,6 +76,10 @@ export const ReactiveHTMLElement_Render_Factory = (ctx: Context) => {
 	}
 }
 
+/**
+ * > [!IMPORTANT]
+ * > note that svg attributes are case sensitive, most notably the "viewBox" and "preserveAspectRatio" attributes must have the exact casing.
+*/
 export const ReactiveSVGElement_Render_Factory = (ctx: Context) => {
 	return class ReactiveSVGElement_Render extends ReactiveComponent_Render_Factory(ctx)<typeof SVGTagComponent> {
 		test(tag: any, props?: any): boolean { return typeof tag === "string" }
@@ -75,23 +87,6 @@ export const ReactiveSVGElement_Render_Factory = (ctx: Context) => {
 		// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 		h<TAG extends keyof SVGElementTagNameMap>(tag: TAG, props?: null | Props<AttrProps>, ...children: (string | Node)[]): SVGElementTagNameMap[TAG] {
 			return super.h(SVGTagComponent, { tag, ...normalizeElementProps(props) }, ...children) as SVGElementTagNameMap[TAG]
-		}
-
-		protected addAttr(element: Element, attribute_node: Attr): void
-		protected addAttr(element: Element, attribute_name: string, attribute_value: any): void
-		protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void
-		protected addAttr(element: Element, attribute: Attr | string, attribute_value?: any): void {
-			// svg attributes are case sensitive, most notably the "viewBox" and "preserveAspectRatio" attributes must have the exact casing.
-			// unfortunately, when we create attribute nodes using `document.createAttribute(attribute_name)`, like done in the super method,
-			// we lose the original casing, and everything becomes lower cased. so, we must instead use
-			//`element.setAttribute(attribute_name, attribute_value)` to preserve the original case.
-			const case_sensitive_attr_name_index = attribute instanceof Attr ? -1 : svg_case_sensitive_attrs_lower.indexOf(attribute.toLowerCase())
-			if (case_sensitive_attr_name_index >= 0) {
-				const attr_name = svg_case_sensitive_attrs[case_sensitive_attr_name_index]
-				element.setAttribute(attr_name, attribute_value)
-				attribute = element.getAttributeNode(attr_name)!
-			}
-			super.addAttr(element, attribute, attribute_value)
 		}
 	}
 }
@@ -106,4 +101,3 @@ export const ReactiveFragment_Render_Factory = (ctx: Context) => {
 		}
 	}
 }
-

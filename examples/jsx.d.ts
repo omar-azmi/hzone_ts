@@ -14,12 +14,12 @@
  * @module
 */
 
-import type { Accessor } from "jsr:@oazmi/tsignal/typedefs"
-
+import type { MaybeAccessor } from "../src/signal.ts"
+import type { AttrValue } from "../src/typedefs.ts"
 
 type AttributeKey = string
 interface Attributes {
-	[key: AttributeKey]: string | Accessor<string>
+	[key: AttributeKey]: MaybeAccessor<AttrValue>
 }
 
 type IntrinsicHTMLElements = { [tagName in keyof HTMLElementTagNameMap]: Attributes }

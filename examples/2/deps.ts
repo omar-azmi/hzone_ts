@@ -7,7 +7,8 @@ import { HyperScope } from "../../src/mod.ts"
 import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "../../src/signal.ts"
 export { throttlingEquals } from "jsr:@oazmi/tsignal"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
-export { Fragment } from "../../src/mod.ts"
+export { ATTRS, Fragment } from "../../src/mod.ts"
+export type { ComponentGenerator, FragmentComponentGenerator } from "../../src/mod.ts"
 
 
 export const

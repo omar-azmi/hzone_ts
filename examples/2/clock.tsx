@@ -1,8 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ATTRS, ComponentGenerator } from "../../src/mod.ts"
-import { Accessor, COMP_SCOPE, FRAG_SCOPE, Fragment, SVG_SCOPE, createMemo, h, popScope, pushScope } from "./deps.ts"
+import { ATTRS, Accessor, COMP_SCOPE, ComponentGenerator, FRAG_SCOPE, Fragment, SVG_SCOPE, createMemo, h, popScope, pushScope } from "./deps.ts"
 import { Hand } from "./hands.tsx"
 import { Lines } from "./lines.tsx"
 

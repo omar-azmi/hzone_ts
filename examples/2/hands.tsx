@@ -1,5 +1,6 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
+
 import { ComponentGenerator } from "../../src/mod.ts"
 import { Accessor, Fragment, h } from "./deps.ts"
 

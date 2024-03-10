@@ -1,8 +1,8 @@
 import { Accessor, Context, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
-import { isFunction } from "./deps.ts"
-import { stringify, stringifyAttrValue } from "./funcdefs.ts"
-import { ComponentGenerator, Component_Render, Fragment, FragmentTagComponent, HTMLTagComponent, Props, SVGTagComponent, normalizeElementProps } from "./mod.ts"
-import { AttrValue, TextValue } from "./typedefs.ts"
+import { Component_Render, Fragment, FragmentTagComponent, HTMLTagComponent, SVGTagComponent } from "../core/mod.ts"
+import { isFunction } from "../deps.ts"
+import { normalizeAttrProps, stringify, stringifyAttrValue } from "../funcdefs.ts"
+import { AttrValue, ComponentGenerator, Props, TextValue } from "../typedefs.ts"
 
 
 export type MaybeAccessor<T> = T | Accessor<T>
@@ -71,7 +71,7 @@ export const ReactiveHTMLElement_Render_Factory = (ctx: Context) => {
 
 		// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 		h<TAG extends keyof HTMLElementTagNameMap>(tag: TAG, props?: null | Props<AttrProps>, ...children: (string | Node)[]): HTMLElementTagNameMap[TAG] {
-			return super.h(HTMLTagComponent, { tag, ...normalizeElementProps(props) }, ...children) as HTMLElementTagNameMap[TAG]
+			return super.h(HTMLTagComponent, { tag, ...normalizeAttrProps(props) }, ...children) as HTMLElementTagNameMap[TAG]
 		}
 	}
 }
@@ -86,7 +86,7 @@ export const ReactiveSVGElement_Render_Factory = (ctx: Context) => {
 
 		// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 		h<TAG extends keyof SVGElementTagNameMap>(tag: TAG, props?: null | Props<AttrProps>, ...children: (string | Node)[]): SVGElementTagNameMap[TAG] {
-			return super.h(SVGTagComponent, { tag, ...normalizeElementProps(props) }, ...children) as SVGElementTagNameMap[TAG]
+			return super.h(SVGTagComponent, { tag, ...normalizeAttrProps(props) }, ...children) as SVGElementTagNameMap[TAG]
 		}
 	}
 }

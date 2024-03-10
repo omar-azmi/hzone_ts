@@ -66,50 +66,10 @@
  * @module
 */
 
-import { ConstructorOf, array_isArray, bind_array_pop, bind_array_push, bind_map_get, bind_stack_seek, console_error, isFunction, object_entries } from "./deps.ts"
-import { is_nullable, stringifyAttrValue } from "./funcdefs.ts"
-import { AttrValue } from "./typedefs.ts"
+import { array_isArray, isFunction, object_entries } from "../deps.ts"
+import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
+import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, HyperRender, Props } from "../typedefs.ts"
 
-
-export type RenderKind = symbol
-
-export abstract class HyperRender<TAG = any, OUTPUT = any> {
-	kind: symbol
-
-	constructor(existing_kind?: symbol)
-	constructor(new_kind_description?: string)
-	constructor(kind?: symbol | string) {
-		this.kind = typeof kind === "symbol" ? kind : Symbol(kind)
-	}
-
-	/** tests if the provided parameters, {@link tag | `tag`} and {@link props | `props`}, are compatible this `Scope`'s {@link h | `h` method} */
-	abstract test(tag: any, props?: any): boolean
-
-	/** creates an {@link OUTPUT | element} out of its properties. functions similar to `React.createElement` */
-	abstract h(tag: TAG, props?: null | { [key: PropertyKey]: any }, ...children: any[]): OUTPUT
-}
-
-export const ATTRS = Symbol("explicitly declared Element attributes of a single Component")
-export type AttrProps = { [attr: string]: any }
-
-export type EventFn<NAME extends keyof HTMLElementEventMap> = (this: Element, event: HTMLElementEventMap[NAME]) => void
-export const EVENTS = Symbol("explicitly declared event listeners of a single Component")
-export type EventProps = { [event_name in keyof HTMLElementEventMap]?: EventFn<event_name> }
-
-export const ADVANCED_EVENTS = Symbol("explicitly declared advaced configurable events")
-export type AdvancedEvenProps = { [event_name in keyof HTMLElementEventMap]?: [event_fn: EventFn<event_name>, options?: boolean | AddEventListenerOptions] }
-
-export interface DefaultProps {
-	[ATTRS]?: AttrProps | undefined | null
-	[EVENTS]?: EventProps | undefined | null
-	[ADVANCED_EVENTS]?: AdvancedEvenProps | undefined | null
-}
-
-export type Props<P = {}> = P & DefaultProps
-
-export type SingleComponentGenerator<P = {}> = (props: Props<P>) => Element
-export type FragmentComponentGenerator<P = {}> = (props: P) => (string | Element)[]
-export type ComponentGenerator<P = {}> = SingleComponentGenerator<P> | FragmentComponentGenerator<P>
 
 export class Component_Render<G extends ComponentGenerator = ComponentGenerator> extends HyperRender<G> {
 	test(tag: any, props?: any): boolean { return isFunction(tag) }
@@ -179,27 +139,13 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 	// TODO: add an `onDispose` or `onDelete` overridable method. and maybe also add `onInit` overridable method.
 }
 
-export const normalizeElementProps = (props?: null | Props<AttrProps>): Props<{}> => {
-	const {
-		[EVENTS]: event_props,
-		[ADVANCED_EVENTS]: advanced_events_props,
-		[ATTRS]: other_attr_props,
-		...attr_props
-	} = props ?? {}
-	return {
-		[EVENTS]: event_props,
-		[ADVANCED_EVENTS]: advanced_events_props,
-		[ATTRS]: { ...attr_props, ...other_attr_props },
-	}
-}
-
 export const HTMLTagComponent = <TAG extends keyof HTMLElementTagNameMap = any>(props?: Props<{ tag?: TAG }>): HTMLElementTagNameMap[TAG] => document.createElement(props!.tag!)
 export class HTMLElement_Render extends Component_Render<typeof HTMLTagComponent> {
 	test(tag: any, props?: any): boolean { return typeof tag === "string" }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 	h<TAG extends keyof HTMLElementTagNameMap>(tag: TAG, props?: null | Props<AttrProps>, ...children: (string | Node)[]): HTMLElementTagNameMap[TAG] {
-		return super.h(HTMLTagComponent, { tag, ...normalizeElementProps(props) }, ...children) as HTMLElementTagNameMap[TAG]
+		return super.h(HTMLTagComponent, { tag, ...normalizeAttrProps(props) }, ...children) as HTMLElementTagNameMap[TAG]
 	}
 }
 
@@ -214,7 +160,7 @@ export class SVGElement_Render extends Component_Render<typeof SVGTagComponent> 
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 	h<TAG extends keyof SVGElementTagNameMap>(tag: TAG, props?: null | Props<AttrProps>, ...children: (string | Node)[]): SVGElementTagNameMap[TAG] {
-		return super.h(SVGTagComponent, { tag, ...normalizeElementProps(props) }, ...children) as SVGElementTagNameMap[TAG]
+		return super.h(SVGTagComponent, { tag, ...normalizeAttrProps(props) }, ...children) as SVGElementTagNameMap[TAG]
 	}
 }
 
@@ -226,78 +172,5 @@ export class Fragment_Render extends Component_Render {
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: Fragment` as the first argument instead of `component: ComponentGenerator`
 	h(tag: Fragment, props?: null, ...children: (string | Node)[]): Element[] {
 		return super.h(FragmentTagComponent, {}, ...children)
-	}
-}
-
-const
-	PushScope = Symbol("pushed a scope"),
-	PopScope = Symbol("popped a scope"),
-	node_only_child_filter = (child: symbol | Node) => (typeof child !== "symbol")
-
-
-type HyperScopeChild = typeof PushScope | typeof PopScope | Node
-type HyperScopeChildren = (HyperScopeChild | Array<HyperScopeChild>)[]
-
-export class HyperScope extends HyperRender<any, any> {
-	protected renderers: Map<RenderKind, HyperRender> = new Map()
-
-	pushScope: (...renderers: RenderKind[]) => typeof PushScope
-	popScope: () => typeof PopScope
-	seekScope: () => HyperRender[]
-
-	constructor(...default_scope: HyperRender[]) {
-		super("hyperscope rederer")
-		default_scope.forEach((renderer) => { this.addRenderer(renderer) })
-		const
-			scope_stack: Array<HyperRender[]> = [],
-			scope_stack_push = bind_array_push(scope_stack),
-			scope_stack_pop = bind_array_pop(scope_stack),
-			scope_stack_seek = bind_stack_seek(scope_stack),
-			all_renderers_map_get = bind_map_get(this.renderers)
-		this.pushScope = (...renderers: RenderKind[]): typeof PushScope => {
-			scope_stack_push(renderers.map((renderer) => all_renderers_map_get(renderer)!))
-			return PushScope
-		}
-		this.popScope = (): typeof PopScope => {
-			scope_stack_pop()
-			return PopScope
-		}
-		this.seekScope = (): HyperRender[] => {
-			return scope_stack_seek() ?? default_scope
-		}
-	}
-
-	addClass<CLS extends ConstructorOf<HyperRender, ARGS>, ARGS extends any[]>(renderer_class: CLS, ...args: ARGS): InstanceType<CLS> {
-		const renderer = new renderer_class(...args)
-		this.addRenderer(renderer)
-		return renderer as any
-	}
-
-	addRenderer<R extends HyperRender>(renderer: R) {
-		this.renderers.set(renderer.kind, renderer)
-	}
-
-	test(tag: any, props?: any): boolean {
-		for (const renderer of this.seekScope()) {
-			if (renderer.test(tag, props)) {
-				return true
-			}
-		}
-		return false
-	}
-
-	h(tag: typeof Fragment, props: null, ...children: HyperScopeChildren): Element[]
-	h(tag: any, props: any, ...children: HyperScopeChildren): Element
-	h(tag: any, props: any, ...children: HyperScopeChildren): undefined | Element | Element[] {
-		for (const renderer of this.seekScope()) {
-			if (renderer === undefined) {
-				console_error("supposed renderer was not registered (its kind symbol is not registered)")
-			}
-			if (renderer.test(tag, props)) {
-				const flat_children = children.flat(1).filter(node_only_child_filter)
-				return renderer.h(tag, props, ...flat_children)
-			}
-		}
-		console_error("failed to capture an appropriate renderer")
 	}
 }

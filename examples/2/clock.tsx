@@ -1,7 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ATTRS, Accessor, COMP_SCOPE, ComponentGenerator, FRAG_SCOPE, Fragment, SVG_SCOPE, createMemo, h, popScope, pushScope } from "./deps.ts"
+import { ATTRS, Accessor, COMP_ZONE, ComponentGenerator, FRAG_ZONE, Fragment, SVG_ZONE, createMemo, h, popZone, pushZone } from "./deps.ts"
 import { Hand } from "./hands.tsx"
 import { Lines } from "./lines.tsx"
 
@@ -13,7 +13,7 @@ type ClockFaceProps = {
 }
 
 export const ClockFace: ComponentGenerator<ClockFaceProps> = (props: ClockFaceProps) => {
-	pushScope(SVG_SCOPE, COMP_SCOPE, FRAG_SCOPE)
+	pushZone(SVG_ZONE, COMP_ZONE, FRAG_ZONE)
 	const element = <svg viewBox="0 0 200 200" width="30vmin">
 		<g transform="translate(100, 100)">
 			{/* static */}
@@ -27,7 +27,7 @@ export const ClockFace: ComponentGenerator<ClockFaceProps> = (props: ClockFacePr
 			<Hand rotate={props.second} {...{ [ATTRS]: { class: "second" } }} length={80} width={2} />
 		</g>
 	</svg>
-	popScope()
+	popZone()
 	return element
 }
 

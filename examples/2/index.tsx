@@ -1,7 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ATTRS, AttrProps } from "../../src/mod.ts"
+import { ATTRS, AttrProps } from "../../src/typedefs.ts"
 import { Clock } from "./clock.tsx"
 import { Fragment, createState, ctx, h } from "./deps.ts"
 

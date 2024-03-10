@@ -2,7 +2,7 @@
 /** @jsxFrag Fragment */
 
 import { stringifyAttrValue } from "../../src/funcdefs.ts"
-import { ATTRS, AttrProps, EVENTS, EventProps } from "../../src/mod.ts"
+import { ATTRS, AttrProps, EVENTS, EventProps } from "../../src/typedefs.ts"
 import { Clock } from "../2/clock.tsx"
 import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, throttlingEquals } from "../2/deps.ts"
 

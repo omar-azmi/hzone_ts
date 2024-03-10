@@ -1,7 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ComponentGenerator } from "../../src/mod.ts"
+import { ComponentGenerator } from "../../src/typedefs.ts"
 import { Accessor, Fragment, h } from "./deps.ts"
 
 type HandProps = {

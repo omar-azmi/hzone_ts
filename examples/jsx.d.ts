@@ -3,7 +3,7 @@
  * 
  * @example
  * ```tsx
- * import { } from "./path/to/hyperscope/jsx.ts"
+ * import { } from "./path/to/hyperzone/jsx.ts"
  * 
  * const my_div = <div>
  * 	<span>Hello</span>
@@ -14,7 +14,7 @@
  * @module
 */
 
-import type { MaybeAccessor } from "../src/signal.ts"
+import type { MaybeAccessor } from "../src/tsignal/mod.ts"
 import type { AttrValue } from "../src/typedefs.ts"
 
 type AttributeKey = string

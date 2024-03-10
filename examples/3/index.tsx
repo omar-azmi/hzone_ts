@@ -1,10 +1,10 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { stringifyAttrValue } from "../../src/funcdefs.ts"
-import { ATTRS, AttrProps, EVENTS, EventProps } from "../../src/typedefs.ts"
+import { ATTRS, AttrProps, EVENTS, EventProps, stringifyAttrValue } from "../../src/mod.ts"
 import { Clock } from "../2/clock.tsx"
 import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, throttlingEquals } from "../2/deps.ts"
+
 
 let seconds_since_epoch_and_midnight = new Date().setHours(0, 0, 0, 0) / 1000
 const getSecondsSinceMidnight = (): number => Date.now() / 1000 - seconds_since_epoch_and_midnight

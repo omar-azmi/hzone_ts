@@ -66,7 +66,7 @@
  * @module
 */
 
-import { array_isArray, isFunction, object_entries } from "../deps.ts"
+import { DEBUG, array_isArray, isFunction, object_entries } from "../deps.ts"
 import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
 import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, HyperRender, Props } from "../typedefs.ts"
 
@@ -164,7 +164,7 @@ export class SVGElement_Render extends Component_Render<typeof SVGTagComponent> 
 	}
 }
 
-export const Fragment = Symbol("indication for a fragment component")
+export const Fragment = Symbol(DEBUG.MINIFY || "indication for a fragment component")
 export const FragmentTagComponent = (props?: any) => [] as Element[]
 export class Fragment_Render extends Component_Render {
 	test(tag: any, props?: any): boolean { return tag === Fragment }

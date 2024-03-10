@@ -12,7 +12,11 @@
 		"url": "https://github.com/omar-azmi/hzone_ts/issues"
 	},
 	"exports": {
-		".": "./src/mod.ts"
+		".": "./src/mod.ts",
+		"./core": "./src/core/mod.ts",
+		"./tsignal": "./src/tsignal/mod.ts",
+		"./funcdefs": "./src/funcdefs.ts",
+		"./typedefs": "./src/typedefs.ts"
 	},
 	"publish": {
 		"exclude": [

@@ -2,10 +2,9 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { Component_Render, Fragment, Fragment_Render, SVGElement_Render } from "../../src/core/mod.ts"
-import { HyperZone } from "../../src/hyperzone.ts"
+import { ATTRS, Component_Render, EVENTS, Fragment, Fragment_Render, HyperZone, SVGElement_Render } from "../../src/mod.ts"
 import { ReactiveHTMLElement_Render_Factory } from "../../src/tsignal/mod.ts"
-import { ATTRS, EVENTS } from "../../src/typedefs.ts"
+
 
 const
 	ctx = new Context(),

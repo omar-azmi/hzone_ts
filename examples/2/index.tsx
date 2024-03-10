@@ -1,11 +1,11 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ATTRS, AttrProps } from "../../src/typedefs.ts"
 import { Clock } from "./clock.tsx"
-import { Fragment, createState, ctx, h } from "./deps.ts"
+import { ATTRS, AttrProps, Fragment, createState, ctx, h } from "./deps.ts"
 
-let seconds_since_epoch_and_midnight = new Date().setHours(0, 0, 0, 0) / 1000
+
+const seconds_since_epoch_and_midnight = new Date().setHours(0, 0, 0, 0) / 1000
 const getSecondsSinceMidnight = (): number => Date.now() / 1000 - seconds_since_epoch_and_midnight
 const [idCurrentTime, getCurrentTime, setCurrentTime] = createState<number>(getSecondsSinceMidnight())
 

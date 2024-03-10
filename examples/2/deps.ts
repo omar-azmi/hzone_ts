@@ -3,13 +3,12 @@
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { bindMethodToSelfByName, object_entries } from "../../src/deps.ts"
-import { HyperZone } from "../../src/hyperzone.ts"
+import { HyperZone } from "../../src/mod.ts"
 import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "../../src/tsignal/mod.ts"
 export { throttlingEquals } from "jsr:@oazmi/tsignal"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
-export { Fragment } from "../../src/core/mod.ts"
-export { ATTRS } from "../../src/typedefs.ts"
-export type { ComponentGenerator, FragmentComponentGenerator } from "../../src/typedefs.ts"
+export { ATTRS, Fragment } from "../../src/mod.ts"
+export type { AttrProps, ComponentGenerator, FragmentComponentGenerator } from "../../src/mod.ts"
 
 
 export const

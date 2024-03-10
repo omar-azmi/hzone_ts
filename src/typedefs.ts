@@ -1,4 +1,5 @@
 import type { Component_Render } from "./core/mod.ts"
+import { DEBUG } from "./deps.ts"
 
 /** any object or primitive that implements the `toString` method. */
 export type Stringifiable = { toString(): string }
@@ -42,7 +43,7 @@ export abstract class HyperRender<TAG = any, OUTPUT = any> {
 }
 
 /** the key used for explicitly declaring attribute props on the output of {@link ComponentGenerator | `ComponentGenerator`s}. */
-export const ATTRS = Symbol("explicitly declared Element attributes of a single Component")
+export const ATTRS = Symbol(DEBUG.MINIFY || "explicitly declared Element attributes of a single Component")
 
 /** the props used for explicitly declaring attributes on the output of {@link ComponentGenerator | `ComponentGenerator`s}.
  * 
@@ -66,7 +67,7 @@ export type AttrProps = { [attr: string]: any }
 export type EventFn<NAME extends keyof HTMLElementEventMap> = (this: Element, event: HTMLElementEventMap[NAME]) => void
 
 /** the key used for explicitly declaring event handling functions on the output of any {@link HyperRender.h | `Element Renderer`}. */
-export const EVENTS = Symbol("explicitly declared event listeners of a single Component")
+export const EVENTS = Symbol(DEBUG.MINIFY || "explicitly declared event listeners of a single Component")
 
 /** the props used for explicitly declaring event handler functions on the output of any {@link HyperRender.h | `Element Renderer`}.
  * 
@@ -92,7 +93,7 @@ export type EventProps = {
 }
 
 /** the key used for explicitly declaring advanced event handling functions on the output of any {@link HyperRender.h | `Element Renderer`}. */
-export const ADVANCED_EVENTS = Symbol("explicitly declared advaced configurable events of a single component")
+export const ADVANCED_EVENTS = Symbol(DEBUG.MINIFY || "explicitly declared advaced configurable events of a single component")
 
 /** the props used for explicitly declaring advanced event handler functions on the output of any {@link HyperRender.h | `Element Renderer`}. <br>
  * each entry's value needs to be a 2-tuple of the event handler function (`event_fn`) and its configuration `option` (of type `AddEventListenerOptions`).

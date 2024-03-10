@@ -1,8 +1,8 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ComponentGenerator } from "../../src/typedefs.ts"
-import { Accessor, Fragment, h } from "./deps.ts"
+import { Accessor, ComponentGenerator, Fragment, h } from "./deps.ts"
+
 
 type HandProps = {
 	rotate: string | Accessor<string>

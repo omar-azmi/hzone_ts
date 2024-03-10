@@ -1,5 +1,5 @@
-import { ConstructorOf, bind_array_pop, bind_array_push, bind_map_get, bind_stack_seek, console_error } from "./deps.ts"
 import type { Fragment } from "./core/mod.ts"
+import { ConstructorOf, DEBUG, bind_array_pop, bind_array_push, bind_map_get, bind_stack_seek, console_error } from "./deps.ts"
 import { HyperRender, RenderKind } from "./typedefs.ts"
 
 
@@ -7,8 +7,8 @@ type HyperZoneChild = typeof PushZone | typeof PopZone | Node
 type HyperZoneChildren = (HyperZoneChild | Array<HyperZoneChild>)[]
 
 const
-	PushZone = Symbol("pushed a zone"),
-	PopZone = Symbol("popped a zone"),
+	PushZone = Symbol(DEBUG.MINIFY || "pushed a zone"),
+	PopZone = Symbol(DEBUG.MINIFY || "popped a zone"),
 	node_only_child_filter = (child: symbol | Node) => (typeof child !== "symbol")
 
 export class HyperZone extends HyperRender<any, any> {
@@ -64,13 +64,13 @@ export class HyperZone extends HyperRender<any, any> {
 	h(tag: any, props: any, ...children: HyperZoneChildren): undefined | Element | Element[] {
 		for (const renderer of this.seekZone()) {
 			if (renderer === undefined) {
-				console_error("supposed renderer was not registered (its kind symbol is not registered)")
+				console_error(DEBUG.ERROR && "supposed renderer was not registered (its kind symbol is not registered)")
 			}
 			if (renderer.test(tag, props)) {
 				const flat_children = children.flat(1).filter(node_only_child_filter)
 				return renderer.h(tag, props, ...flat_children)
 			}
 		}
-		console_error("failed to capture an appropriate renderer for tag:", tag)
+		console_error(DEBUG.ERROR && "failed to capture an appropriate renderer for tag:", tag)
 	}
 }

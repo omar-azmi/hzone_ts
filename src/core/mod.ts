@@ -66,7 +66,7 @@
  * @module
 */
 
-import { DEBUG, array_isArray, isFunction, object_entries } from "../deps.ts"
+import { DEBUG, array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
 import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
 import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, HyperRender, Props } from "../typedefs.ts"
 
@@ -161,6 +161,48 @@ export class SVGElement_Render extends Component_Render<typeof SVGTagComponent> 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 	h<TAG extends keyof SVGElementTagNameMap>(tag: TAG, props?: null | Props<AttrProps>, ...children: (string | Node)[]): SVGElementTagNameMap[TAG] {
 		return super.h(SVGTagComponent, { tag, ...normalizeAttrProps(props) }, ...children) as SVGElementTagNameMap[TAG]
+	}
+}
+
+export type TemplateProps = {
+	id: `${string}-${string}`
+	is?: string
+	shallow?: boolean
+}
+
+// @ts-ignore: `DocumentFragment` does not inherit from `Element`, but it does support appending children in the same way regular Elements support it. which is all what we need from this component generator.
+// export const TemplateTagComponent: SingleComponentGenerator<Partial<TemplateProps>> = (props: Props<TemplateProps>): DocumentFragment => {
+// 	const
+// 		{ id, is } = props,
+// 		template = document.createElement("template")
+// 	dom_customElements.define(id, class extends HTMLElement {
+// 		constructor() { super() }
+// 	}, { extends: is })
+// 	return template.content
+// }
+
+export class TemplateElement_Render extends Component_Render<(props: TemplateProps) => HTMLTemplateElement> {
+	test(tag: any, props?: any): boolean { return tag === "template" }
+
+	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
+	h(tag: "template", props: TemplateProps, ...children: (string | Node)[]): HTMLTemplateElement {
+		const
+			{ id, is, shallow = false } = props,
+			template = document.createElement("template"),
+			template_content = template.content,
+			template_constructor = class extends HTMLElement {
+				constructor() {
+					super()
+					// this.append(...template_content.cloneNode(!shallow).childNodes as unknown as ChildNode[])
+					this.attachShadow({ mode: "open" }).appendChild(
+						template_content.cloneNode(!shallow)
+					)
+				}
+			}
+		dom_customElements.define(id, template_constructor, { extends: is })
+		// append the children to the template's content `DocumentFragment`
+		super.h((() => template_content as any), {}, ...children)
+		return template
 	}
 }
 

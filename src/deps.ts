@@ -13,6 +13,8 @@ export const enum DEBUG {
 	MINIFY = 1,
 }
 
+export const dom_customElements = globalThis.customElements
+
 // TODO: add a `[REFS]` symbol in `DefaultProps`, which will allow the user to set the props of user-named child components inside of the component generator.
 /* @example
 ```tsx
@@ -35,3 +37,11 @@ const my_div = <ComponentB age=81 {...{[REFS]: { [ComponentA_REF]: { name: strin
 ```
 I think this feature should be implemented inside of the `processChild` method.
 */
+
+// TODO: add dedicated style manipulation
+// TODO: add dedicated element property manipulation, such as: `HTMLInputElement.value` and `HTMLElement.style`.
+//       these things are different from their equivalent attribute nodes, but they are coupled. although the properties hold the "true" value.
+// TODO: create a core `Component_Render` for `<template>` types, or support the more generic web-components model.
+//       they've got their own set of rules for cloning (shadow root and stuff) and appending (template_dom.content.append),
+//       so the standard html component generator/renderer is not suitable for it.
+// TODO: purge the use of symbols to change scopes, and instead plug in the instances of the render classes directly into the zone.

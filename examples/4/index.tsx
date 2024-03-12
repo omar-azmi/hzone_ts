@@ -2,8 +2,7 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { DynamicStyleSheet } from "../../src/core/mod.ts"
-import { Component_Render, Fragment, Fragment_Render, HyperZone, Stringifiable, TemplateElement_Render, stringify } from "../../src/mod.ts"
+import { Component_Render, DynamicStyleSheet, Fragment, Fragment_Render, HyperZone, Stringifiable, TemplateElement_Render, stringify } from "../../src/mod.ts"
 import { ReactiveHTMLElement_Render_Factory } from "../../src/tsignal/mod.ts"
 
 

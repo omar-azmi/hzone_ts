@@ -1,5 +1,5 @@
 import { Accessor, Context, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
-import { Component_Render, Fragment, FragmentTagComponent, HTMLTagComponent, SVGTagComponent } from "../core/mod.ts"
+import { Component_Render, Fragment, FragmentTagComponent, HTMLTagComponent, SVGTagComponent } from "../core/renderers.ts"
 import { isFunction } from "../deps.ts"
 import { normalizeAttrProps, stringify, stringifyAttrValue } from "../funcdefs.ts"
 import { AttrValue, ComponentGenerator, Props, TextValue } from "../typedefs.ts"

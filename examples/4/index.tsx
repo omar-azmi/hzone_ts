@@ -2,7 +2,7 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { CSSStyleRule_Render, CSSStyleSheet_Render } from "../../src/core/mod.ts"
+import { DynamicStyleSheet } from "../../src/core/mod.ts"
 import { Component_Render, Fragment, Fragment_Render, HyperZone, Stringifiable, TemplateElement_Render, stringify } from "../../src/mod.ts"
 import { ReactiveHTMLElement_Render_Factory } from "../../src/tsignal/mod.ts"
 
@@ -11,9 +11,7 @@ const
 	ctx = new Context(),
 	createState = ctx.addClass(StateSignal_Factory),
 	createMemo = ctx.addClass(MemoSignal_Factory),
-	ReactiveHTMLElement_Render = ReactiveHTMLElement_Render_Factory(ctx),
-	css_renderer = new CSSStyleSheet_Render(),
-	css_rule_renderer = new CSSStyleRule_Render()
+	ReactiveHTMLElement_Render = ReactiveHTMLElement_Render_Factory(ctx)
 
 const
 	hyperzone = new HyperZone(
@@ -23,9 +21,6 @@ const
 		new ReactiveHTMLElement_Render("reactive html jsx renderer"),
 		new Component_Render("component jsx renderer"),
 	)
-
-hyperzone.addRenderer(css_renderer)
-hyperzone.addRenderer(css_rule_renderer)
 
 const
 	h = hyperzone.h.bind(hyperzone),
@@ -57,18 +52,14 @@ const css_rule = (selector: string, declarations: string[]) => {
 // TODO: implement shared (or global) attribute on <style> tags when used inside of `<template>`, or perhapse implement a global style zone/renderer
 
 const [, getParagraphText, setParagraphText] = createState("My Paragraph Template")
-pushZone(css_renderer.kind, css_rule_renderer.kind)
-const my_template_css = <css>
-	<rule
-		selector="p"
-		color="white"
-		backgroundColor={"#666"}
-		padding={`${5}px`}
-	/>
-</css>
-popZone()
-console.log(my_template_css)
-const my_template = <template id="my-paragraph" sheets={[my_template_css,]}>
+const my_template_style = new DynamicStyleSheet()
+my_template_style.setRule("p", {
+	color: "white",
+	backgroundColor: "#666",
+	padding: `${5}px`
+})
+
+const my_template = <template id="my-paragraph" sheets={[my_template_style.getSheet(),]}>
 	<p>{getParagraphText}</p>
 	<slot name="slot-1">
 		<p>Default Text</p>

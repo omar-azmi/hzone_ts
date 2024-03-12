@@ -1,6 +1,5 @@
-import type { Fragment } from "./core/mod.ts"
-import { ConstructorOf, DEBUG, bind_array_pop, bind_array_push, bind_map_get, bind_stack_seek, console_error } from "./deps.ts"
-import { HyperRender, RenderKind } from "./typedefs.ts"
+import { DEBUG, console_error } from "./deps.ts"
+import { Fragment, HyperRender } from "./typedefs.ts"
 
 
 type HyperZoneChild = typeof PushZone | typeof PopZone | Node
@@ -12,42 +11,24 @@ const
 	node_only_child_filter = (child: symbol | Node) => (typeof child !== "symbol")
 
 export class HyperZone extends HyperRender<any, any> {
-	protected renderers: Map<RenderKind, HyperRender> = new Map()
-
-	pushZone: (...renderers: RenderKind[]) => typeof PushZone
-	popZone: () => typeof PopZone
-	seekZone: () => HyperRender[]
+	protected zones: Array<HyperRender[]> = []
 
 	constructor(...default_zone: HyperRender[]) {
-		super("hyperzone rederer")
-		default_zone.forEach((renderer) => { this.addRenderer(renderer) })
-		const
-			zone_stack: Array<HyperRender[]> = [],
-			zone_stack_push = bind_array_push(zone_stack),
-			zone_stack_pop = bind_array_pop(zone_stack),
-			zone_stack_seek = bind_stack_seek(zone_stack),
-			all_renderers_map_get = bind_map_get(this.renderers)
-		this.pushZone = (...renderers: RenderKind[]): typeof PushZone => {
-			zone_stack_push(renderers.map((renderer) => all_renderers_map_get(renderer)!))
-			return PushZone
-		}
-		this.popZone = (): typeof PopZone => {
-			zone_stack_pop()
-			return PopZone
-		}
-		this.seekZone = (): HyperRender[] => {
-			return zone_stack_seek() ?? default_zone
-		}
+		super()
+		this.pushZone(...default_zone)
 	}
 
-	addClass<CLS extends ConstructorOf<HyperRender, ARGS>, ARGS extends any[]>(renderer_class: CLS, ...args: ARGS): InstanceType<CLS> {
-		const renderer = new renderer_class(...args)
-		this.addRenderer(renderer)
-		return renderer as any
+	pushZone(...renderers: HyperRender[]): typeof PushZone {
+		this.zones.push(renderers)
+		return PushZone
 	}
-
-	addRenderer<R extends HyperRender>(renderer: R) {
-		this.renderers.set(renderer.kind, renderer)
+	popZone(): typeof PopZone {
+		const zones = this.zones
+		if (zones.length > 1) { zones.pop() }
+		return PopZone
+	}
+	seekZone(): HyperRender[] {
+		return this.zones.at(-1)!
 	}
 
 	test(tag: any, props?: any): boolean {
@@ -72,5 +53,20 @@ export class HyperZone extends HyperRender<any, any> {
 			}
 		}
 		console_error(DEBUG.ERROR && "failed to capture an appropriate renderer for tag:", tag)
+	}
+
+	static create(...default_zone: HyperRender[]): ({
+		h: HyperZone["h"]
+		Fragment: typeof Fragment
+		pushZone: HyperZone["pushZone"]
+		popZone: HyperZone["popZone"]
+	}) {
+		const new_hyperzone = new this(...default_zone)
+		return {
+			h: new_hyperzone.bindMethod("h"),
+			Fragment,
+			pushZone: new_hyperzone.bindMethod("pushZone"),
+			popZone: new_hyperzone.bindMethod("popZone"),
+		}
 	}
 }

@@ -1,5 +1,5 @@
 import type { Component_Render } from "./core/mod.ts"
-import { DEBUG } from "./deps.ts"
+import { DEBUG, bindMethodToSelfByName } from "./deps.ts"
 
 /** any object or primitive that implements the `toString` method. */
 export type Stringifiable = { toString(): string }
@@ -22,24 +22,20 @@ export type AttrValue = Stringifiable | AttrTruthy | AttrFalsy
 /** the value assignable to any `TextNode` */
 export type TextValue = Stringifiable | null | undefined
 
-/** every instance of {@link HyperRender | `HyperRender`} should be identifiable by a unique symbol. */
-export type RenderKind = symbol
-
 /** this is the base model for this library which must be extended by all JSX renders. */
 export abstract class HyperRender<TAG = any, OUTPUT = any> {
-	kind: RenderKind
-
-	constructor(existing_kind?: symbol)
-	constructor(new_kind_description?: string)
-	constructor(kind?: symbol | string) {
-		this.kind = typeof kind === "symbol" ? kind : Symbol(kind)
-	}
-
 	/** tests if the provided parameters, {@link tag | `tag`} and {@link props | `props`}, are compatible this `Zone`'s {@link h | `h` method} */
 	abstract test(tag: any, props?: any): boolean
 
 	/** creates an {@link OUTPUT | element} out of its properties. functions similar to `React.createElement` */
 	abstract h(tag: TAG, props?: null | { [key: PropertyKey]: any }, ...children: any[]): OUTPUT
+
+	/** convenience method for generating instance-bound closures out of prototype methods.
+	 * only for internal use.
+	*/
+	bindMethod<M extends keyof this>(method_name: M): this[M] {
+		return bindMethodToSelfByName(this as any, method_name) as this[M]
+	}
 }
 
 /** the key used for explicitly declaring attribute props on the output of {@link ComponentGenerator | `ComponentGenerator`s}. */
@@ -164,3 +160,5 @@ export type FragmentComponentGenerator<P = {}> = (props: P) => (string | Element
 
 /** a function that takes in a single {@link Props | `Props`} object variable, and generates either a single HTML element or an array of them. */
 export type ComponentGenerator<P = {}> = SingleComponentGenerator<P> | FragmentComponentGenerator<P>
+
+export const Fragment = Symbol(DEBUG.MINIFY || "indicator for a fragment component")

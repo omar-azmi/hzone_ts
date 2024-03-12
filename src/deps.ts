@@ -1,5 +1,4 @@
-export { camelToKebab } from "jsr:@oazmi/kitchensink/stringman"
-export { bindMethodToSelfByName, bind_array_pop, bind_array_push, bind_map_get, bind_stack_seek } from "jsr:@oazmi/kitchensink@0.7.5/binder"
+export { bindMethodToSelfByName } from "jsr:@oazmi/kitchensink@0.7.5/binder"
 export { array_isArray, console_error, object_assign, object_entries, object_fromEntries } from "jsr:@oazmi/kitchensink@0.7.5/builtin_aliases_deps"
 export { isFunction } from "jsr:@oazmi/kitchensink@0.7.5/struct"
 export type { ConstructorOf } from "jsr:@oazmi/kitchensink@0.7.5/typedefs"
@@ -42,10 +41,10 @@ const my_div = <ComponentB age=81 {...{[REFS]: { [ComponentA_REF]: { name: strin
 I think this feature should be implemented inside of the `processChild` method.
 */
 
-// TODO: add dedicated style manipulation
-// TODO: add dedicated element property manipulation, such as: `HTMLInputElement.value` and `HTMLElement.style`.
+// PARTIAL (not user friendly yet): add dedicated style manipulation
+// DONE (it's now accessible via `[MEMBERS]` symbol): add dedicated element property manipulation, such as: `HTMLInputElement.value` and `HTMLElement.style`.
 //       these things are different from their equivalent attribute nodes, but they are coupled. although the properties hold the "true" value.
 // TODO: create a core `Component_Render` for `<template>` types, or support the more generic web-components model.
 //       they've got their own set of rules for cloning (shadow root and stuff) and appending (template_dom.content.append),
 //       so the standard html component generator/renderer is not suitable for it.
-// TODO: purge the use of symbols to change scopes, and instead plug in the instances of the render classes directly into the zone.
+// DONE: purge the use of symbols to change scopes, and instead plug in the instances of the render classes directly into the zone.

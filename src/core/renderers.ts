@@ -66,9 +66,9 @@
  * @module
 */
 
-import { DEBUG, array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
+import { array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
 import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, HyperRender, MEMBERS, Props } from "../typedefs.ts"
+import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, Fragment, HyperRender, MEMBERS, Props } from "../typedefs.ts"
 
 
 export class Component_Render<G extends ComponentGenerator = ComponentGenerator> extends HyperRender<G> {
@@ -205,7 +205,6 @@ export class TemplateElement_Render extends Component_Render<(props: Props<Parti
 	}
 }
 
-export const Fragment = Symbol(DEBUG.MINIFY || "indication for a fragment component")
 export const FragmentTagComponent = (props?: any) => [] as Element[]
 export class Fragment_Render extends Component_Render {
 	test(tag: any, props?: any): boolean { return tag === Fragment }

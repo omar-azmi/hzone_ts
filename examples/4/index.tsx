@@ -2,7 +2,7 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { Component_Render, DynamicStyleSheet, Fragment, Fragment_Render, HyperZone, Stringifiable, TemplateElement_Render, stringify } from "../../src/mod.ts"
+import { Component_Render, DynamicStyleSheet, Fragment_Render, HyperZone, TemplateElement_Render } from "../../src/mod.ts"
 import { ReactiveHTMLElement_Render_Factory } from "../../src/tsignal/mod.ts"
 
 
@@ -12,43 +12,18 @@ const
 	createMemo = ctx.addClass(MemoSignal_Factory),
 	ReactiveHTMLElement_Render = ReactiveHTMLElement_Render_Factory(ctx)
 
-const
-	hyperzone = new HyperZone(
-		new Fragment_Render("fragment component jsx renderer"),
-		// `TemplateElement_Render` needs to be higher than any `HTMLElement_Render`, as `HTMLElement_Render` captures all strings.
-		new TemplateElement_Render("template element generator"),
-		new ReactiveHTMLElement_Render("reactive html jsx renderer"),
-		new Component_Render("component jsx renderer"),
-	)
+const { h, Fragment, } = HyperZone.create(
+	new Fragment_Render(),
+	// `TemplateElement_Render` needs to be higher than any `HTMLElement_Render`, as `HTMLElement_Render` captures all strings.
+	new TemplateElement_Render(),
+	new ReactiveHTMLElement_Render(),
+	new Component_Render(),
+)
 
-const
-	h = hyperzone.h.bind(hyperzone),
-	{ pushZone, popZone } = hyperzone
-
-/** a reactive css declaration/statement */
-const dec = (strings: TemplateStringsArray, ...values: Stringifiable[]): string => {
-	const
-		output: string[] = [strings[0],],
-		len = strings.length
-	for (let i = 1; i < len; i++) {
-		output.push(stringify(values[i - 1]) ?? "")
-		output.push(strings[i])
-	}
-	output.push(output.pop()! + ";")
-	return output.join("")
-}
-
-// TODO: a much better way of changing single css declarations via js:
+// DONE: a much better way of changing single css declarations via js:
 // - https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Using_dynamic_styling_information
 // - https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet/CSSStyleSheet
-
-
-const css_rule = (selector: string, declarations: string[]) => {
-	return selector + "{\n" + declarations.join(";\n\t") + "}\n"
-}
-
-// const style_literal = (selector: string) => (rule: TemplateStringsArray, ...values: any[]) => `${selector} {\n${rule}\n}`
-// TODO: implement shared (or global) attribute on <style> tags when used inside of `<template>`, or perhapse implement a global style zone/renderer
+// TODO: implement a user-friendly shared (or global) attribute on <style> tags when used inside of `<template>`, or perhapse implement a global style zone/renderer
 
 const [, getParagraphText, setParagraphText] = createState("My Paragraph Template")
 const my_template_style = new DynamicStyleSheet()

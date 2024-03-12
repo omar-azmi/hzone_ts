@@ -8,7 +8,8 @@ import { AttrValue, ComponentGenerator, Props, TextValue } from "../typedefs.ts"
 export type MaybeAccessor<T> = T | Accessor<T>
 const
 	isAccessor_AttrValue = isFunction as ((obj: any) => obj is Accessor<AttrValue>),
-	isAccessor_TextValue = isFunction as ((obj: any) => obj is Accessor<TextValue>)
+	isAccessor_TextValue = isFunction as ((obj: any) => obj is Accessor<TextValue>),
+	isAccessor_MemberValue = isFunction as ((obj: any) => obj is Accessor<any>)
 
 
 export const ReactiveComponent_Render_Factory = (ctx: Context) => {
@@ -46,6 +47,31 @@ export const ReactiveComponent_Render_Factory = (ctx: Context) => {
 				}, { defer: false })
 			}
 			return attr
+		}
+
+		protected setMember<E extends Element>(element: E, key: keyof E, value: MaybeAccessor<E[keyof E]>): void {
+			const
+				value_is_accessor = isAccessor_MemberValue(value),
+				initial_value = value_is_accessor ? value() : value
+			super.setMember(element, key, initial_value)
+			if (value_is_accessor) {
+				createEffect((id) => {
+					const
+						old_value = element[key],
+						new_value = value(id),
+						value_has_changed = new_value !== old_value
+					if (value_has_changed || id) {
+						// we make a comparison between the old and the new values because certain member value assignments are expensive.
+						// for example, each `HTMLInputElement.value` assignment creates a "dead" node in the memory.
+						// you can witness it yourself in `/examples/3/`, whereby if you open devtools and head over to "Performance monitor".
+						// you'll see the number of "DOM Nodes" gradually increase up to additional 800 nodes, until the garbage-collections kicks in,
+						// and kills the additional 800 nodes. and the process then repeats. but if you disable the input element's value modifying signal,
+						// then there won't be any increase in the number of "DOM Nodes" over time.
+						element[key] = new_value
+					}
+					return !value_has_changed
+				}, { defer: false })
+			}
 		}
 
 		protected processChild(child: MaybeAccessor<TextValue> | Node): string | Node {

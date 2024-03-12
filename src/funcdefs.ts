@@ -1,4 +1,4 @@
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, EVENTS, Props, Stringifiable } from "./typedefs.ts"
+import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, EVENTS, MEMBERS, Props, Stringifiable } from "./typedefs.ts"
 
 
 export const
@@ -51,12 +51,14 @@ export const normalizeAttrProps = (props?: null | Props<AttrProps>): Props<{}> =
 	const {
 		[EVENTS]: event_props,
 		[ADVANCED_EVENTS]: advanced_events_props,
+		[MEMBERS]: member_props,
 		[ATTRS]: other_attr_props,
 		...attr_props
 	} = props ?? {}
 	return {
 		[EVENTS]: event_props,
 		[ADVANCED_EVENTS]: advanced_events_props,
+		[MEMBERS]: member_props,
 		[ATTRS]: { ...attr_props, ...other_attr_props },
 	}
 }

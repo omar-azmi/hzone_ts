@@ -1,7 +1,8 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ATTRS, AttrProps, EVENTS, EventProps, stringifyAttrValue } from "../../src/mod.ts"
+import { ATTRS, AttrProps, EVENTS, EventProps, MEMBERS, MemberProps } from "../../src/mod.ts"
+import { MaybeAccessor } from "../../src/tsignal/mod.ts"
 import { Clock } from "../2/clock.tsx"
 import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, throttlingEquals } from "../2/deps.ts"
 
@@ -56,16 +57,18 @@ const slow_down_time = <div style={object_to_css_inline_style({
 </div>
 
 let time_input_element_is_focused = false
-const time_input_element: HTMLInputElement = <input type="number" value={createMemo(getTime, {
-	equals: throttlingEquals<number>(150, (v1, v2) => {
-		const is_equal = v1 === v2
-		if (!is_equal && isFinite(v2) && !time_input_element_is_focused && time_input_element) {
-			time_input_element.value = stringifyAttrValue(v2)!
-			return true
-		}
-		return false
-	})
-})[1]} {...{
+const time_input_element: HTMLInputElement = <input type="number" {...{
+	[MEMBERS]: {
+		valueAsNumber: createMemo(getTime, {
+			equals: throttlingEquals<number>(150, (v1, v2) => {
+				const is_equal = v1 === v2
+				if (!is_equal && isFinite(v2) && !time_input_element_is_focused) {
+					return false
+				}
+				return true
+			})
+		})[1]
+	} as MemberProps<{ [K in keyof HTMLInputElement]: MaybeAccessor<HTMLInputElement[K]> }>,
 	[EVENTS]: {
 		change(event) {
 			time_input_element_is_focused = true

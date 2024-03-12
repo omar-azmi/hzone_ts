@@ -68,7 +68,7 @@
 
 import { DEBUG, array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
 import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, HyperRender, Props } from "../typedefs.ts"
+import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, HyperRender, MEMBERS, Props } from "../typedefs.ts"
 
 
 export class Component_Render<G extends ComponentGenerator = ComponentGenerator> extends HyperRender<G> {
@@ -93,6 +93,9 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 		}
 		for (const [event_name, [event_fn, options]] of object_entries(props[ADVANCED_EVENTS] ?? {})) {
 			this.addEvent(component_node, event_name, event_fn, options)
+		}
+		for (const [member_key, member_value] of object_entries(props[MEMBERS] ?? {})) {
+			this.setMember(component_node, member_key as any, member_value)
 		}
 		component_node.append(...children)
 		return component_node
@@ -130,6 +133,10 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 		options?: boolean | AddEventListenerOptions
 	): void {
 		element.addEventListener(event_name, event_fn, options)
+	}
+
+	protected setMember<E extends Element>(element: E, key: keyof E, value: E[typeof key]): void {
+		element[key] = value
 	}
 
 	protected processChild(child: string | Node): string | Node {

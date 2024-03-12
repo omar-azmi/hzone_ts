@@ -105,26 +105,52 @@ export const ADVANCED_EVENTS = Symbol(DEBUG.MINIFY || "explicitly declared advac
  * 		click: [(event) => {
  * 			console.log("user clicked at (x,y)-position:", event.clientX, event.clientY)
  * 		}, { once: true, passive: true }]
- * 	} as AdvancedEvenProps
+ * 	} as AdvancedEventProps
  * }}>
  * PLZZ CLICC ONN BIGG DIVV ONCEE ONLYY
  * </div>
  * ```
 */
-export type AdvancedEvenProps = {
+export type AdvancedEventProps = {
 	[event_name in keyof HTMLElementEventMap]?: [event_fn: EventFn<event_name>, options?: boolean | AddEventListenerOptions]
+}
+
+/** the key used for explicitly declaring member assignments to make on the generated output of any {@link HyperRender.h | `Element Renderer`}. */
+export const MEMBERS = Symbol(DEBUG.MINIFY || "explicitly declared element member assignments to make")
+
+/** the props used for explicitly declaring member assignments to make on the generated output of any {@link HyperRender.h | `Element Renderer`}. <br>
+ * note that many intrinsic properties of certain HTMLElements, such as `value` and `checked`, are also reflected as their "attributes",
+ * but they are merely there for the purpose of initialization, and not actual mutation (although it does work in many cases). <br>
+ * still, it is best to modify the property of an element if it is an intrinsic feature of that element, rather than modifying its attributes,
+ * since the property holds the "real"/"true" value, and usually in a primitive javascript object format, rather than being exclusively a `string` or `null`.
+ * 
+ * @example
+ * ```tsx
+ * // assign `my_input.value = "hello"` and `my_input.disabled = true`
+ * const my_input = <input value="default value" {...{
+ * 	[MemberProps]: {
+ * 		value: "hello",
+ * 		disabled: true,
+ * 	} as MemberProps<HTMLInputElement>
+ * }} />
+ * ```
+*/
+export type MemberProps<E = Element> = {
+	[member_key in keyof E]?: E[member_key]
 }
 
 /** the default props assignable to all components (any renderer that inherits from {@link Component_Render | `Component_Render`} will support these). <br>
  * see the details of each on their respective documentation:
  * - for element attributes, see: {@link AttrProps | `AttrProps`}
  * - for element events, see: {@link EventProps | `EventProps`}
- * - for configurable element events, see: {@link AdvancedEvenProps | `AdvancedEvenProps`}
+ * - for configurable element events, see: {@link AdvancedEventProps | `AdvancedEventProps`}
+ * - for element javascript members, see: {@link MemberProps | `MemberProps`}
 */
 export interface DefaultProps {
 	[ATTRS]?: AttrProps | undefined | null
 	[EVENTS]?: EventProps | undefined | null
-	[ADVANCED_EVENTS]?: AdvancedEvenProps | undefined | null
+	[ADVANCED_EVENTS]?: AdvancedEventProps | undefined | null
+	[MEMBERS]?: MemberProps | undefined | null
 }
 
 /** the props accepted by any {@link ComponentGenerator}, as a single variable. */

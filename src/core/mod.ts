@@ -66,7 +66,7 @@
  * @module
 */
 
-import { DEBUG, array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
+import { DEBUG, PreserveStringKeyAndValues, array_isArray, camelToKebab, dom_customElements, isFunction, object_entries } from "../deps.ts"
 import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
 import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, HyperRender, Props } from "../typedefs.ts"
 
@@ -167,34 +167,26 @@ export class SVGElement_Render extends Component_Render<typeof SVGTagComponent> 
 export type TemplateProps = {
 	id: `${string}-${string}`
 	is?: string
-	shallow?: boolean
+	shallow?: boolean,
+	sheets?: CSSStyleSheet[]
 }
 
-// @ts-ignore: `DocumentFragment` does not inherit from `Element`, but it does support appending children in the same way regular Elements support it. which is all what we need from this component generator.
-// export const TemplateTagComponent: SingleComponentGenerator<Partial<TemplateProps>> = (props: Props<TemplateProps>): DocumentFragment => {
-// 	const
-// 		{ id, is } = props,
-// 		template = document.createElement("template")
-// 	dom_customElements.define(id, class extends HTMLElement {
-// 		constructor() { super() }
-// 	}, { extends: is })
-// 	return template.content
-// }
-
-export class TemplateElement_Render extends Component_Render<(props: TemplateProps) => HTMLTemplateElement> {
+export class TemplateElement_Render extends Component_Render<(props: Props<Partial<TemplateProps>>) => HTMLTemplateElement> {
 	test(tag: any, props?: any): boolean { return tag === "template" }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
 	h(tag: "template", props: TemplateProps, ...children: (string | Node)[]): HTMLTemplateElement {
 		const
-			{ id, is, shallow = false } = props,
+			{ id, is, shallow = false, sheets = [] } = props,
 			template = document.createElement("template"),
 			template_content = template.content,
 			template_constructor = class extends HTMLElement {
 				constructor() {
 					super()
 					// this.append(...template_content.cloneNode(!shallow).childNodes as unknown as ChildNode[])
-					this.attachShadow({ mode: "open" }).appendChild(
+					const shadow = this.attachShadow({ mode: "open" })
+					shadow.adoptedStyleSheets.push(...sheets)
+					shadow.appendChild(
 						template_content.cloneNode(!shallow)
 					)
 				}
@@ -203,6 +195,48 @@ export class TemplateElement_Render extends Component_Render<(props: TemplatePro
 		// append the children to the template's content `DocumentFragment`
 		super.h((() => template_content as any), {}, ...children)
 		return template
+	}
+}
+
+export type StyleProps = {
+	global?: boolean
+}
+
+let current_css_stylesheet: CSSStyleSheet | undefined = undefined
+
+export class CSSStyleSheet_Render extends Component_Render<(props: Props<Partial<StyleProps>>) => any> {
+	test(tag: any, props?: any): boolean { return tag === "css" }
+
+	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
+	h(tag: "css", props?: StyleProps, ...children: (string | Node)[]): CSSStyleSheet {
+		const sheet = current_css_stylesheet!
+		current_css_stylesheet = undefined
+		if (props?.global) {
+			document.adoptedStyleSheets.push(sheet)
+		}
+		return sheet
+	}
+}
+
+export interface StyleRuleProps extends Partial<PreserveStringKeyAndValues<CSSStyleDeclaration>> {
+	selector: string
+}
+
+const object_to_css_text = (style_props: Omit<StyleRuleProps, "selector">): Array<string> => {
+	return object_entries(style_props).map(([key, value]: [string, string]) => (camelToKebab(key) + ":" + value + ";"))
+}
+
+export class CSSStyleRule_Render extends Component_Render {
+	test(tag: any, props?: any): boolean { return tag === "rule" }
+
+	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
+	h(tag: "rule", props: StyleRuleProps, ...children: never[]): void {
+		const
+			{ selector, ...style_props } = props,
+			css_texts = object_to_css_text(style_props).join("\n\t")
+		current_css_stylesheet ??= new CSSStyleSheet()
+		current_css_stylesheet.replaceSync(`${selector} {${css_texts}}`)
+		// rules = [...s.cssRules as unknown as CSSRule[]].find()
 	}
 }
 

@@ -68,7 +68,7 @@
 
 import { array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
 import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EventFn, Fragment, HyperRender, MEMBERS, Props } from "../typedefs.ts"
+import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EXECUTE, EventFn, Fragment, HyperRender, MEMBERS, Props } from "../typedefs.ts"
 
 
 export class Component_Render<G extends ComponentGenerator = ComponentGenerator> extends HyperRender<G> {
@@ -95,7 +95,10 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 			this.addEvent(component_node, event_name, event_fn, options)
 		}
 		for (const [member_key, member_value] of object_entries(props[MEMBERS] ?? {})) {
-			this.setMember(component_node, member_key as any, member_value)
+			this.setMember(component_node, member_key as any, member_value as any)
+		}
+		for (const fn of (props[EXECUTE] ?? [])) {
+			this.executeFn(component_node, fn)
 		}
 		component_node.append(...children)
 		return component_node
@@ -135,8 +138,12 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 		element.addEventListener(event_name, event_fn, options)
 	}
 
-	protected setMember<E extends Element>(element: E, key: keyof E, value: E[typeof key]): void {
+	protected setMember<E = Element>(element: E, key: keyof E, value: E[typeof key]): void {
 		element[key] = value
+	}
+
+	protected executeFn<E = Element>(element: E, fn: (element: E) => void) {
+		fn(element)
 	}
 
 	protected processChild(child: string | Node): string | Node {

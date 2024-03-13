@@ -49,7 +49,7 @@ export const ReactiveComponent_Render_Factory = (ctx: Context) => {
 			return attr
 		}
 
-		protected setMember<E extends Element>(element: E, key: keyof E, value: MaybeAccessor<E[keyof E]>): void {
+		protected setMember<E = Element>(element: E, key: keyof E, value: MaybeAccessor<E[keyof E]>): void {
 			const
 				value_is_accessor = isAccessor_MemberValue(value),
 				initial_value = value_is_accessor ? value() : value

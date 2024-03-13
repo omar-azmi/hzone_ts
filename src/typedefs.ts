@@ -124,7 +124,7 @@ export const MEMBERS = Symbol(DEBUG.MINIFY || "explicitly declared element membe
  * ```tsx
  * // assign `my_input.value = "hello"` and `my_input.disabled = true`
  * const my_input = <input value="default value" {...{
- * 	[MemberProps]: {
+ * 	[MEMBERS]: {
  * 		value: "hello",
  * 		disabled: true,
  * 	} as MemberProps<HTMLInputElement>
@@ -135,18 +135,49 @@ export type MemberProps<E = Element> = {
 	[member_key in keyof E]?: E[member_key]
 }
 
+/** the key used for explicitly declaring an array of functions to execute on the generated output element of any {@link HyperRender.h | `Element Renderer`} as the first parameter. */
+export const EXECUTE = Symbol(DEBUG.MINIFY || "explicitly declared list of functions to execute on the element itself after its creation")
+
+/** provide an array of functions to execute on the generated output of an {@link HyperRender.h | `Element Renderer`} as the first argument. <br>
+ * this is useful in cases where you may wish to register the element post-creation, or perhaps apply some mutations to the element itself.
+ * 
+ * @example
+ * ```tsx
+ * // apply some style to `my_div` post-creation
+ * const my_div = <div style="background-color: green;" {...{
+ * 	[EXECUTE]: [
+ * 		(div_element): void => {
+ * 			if(div_element.style.backgroundColor === "green") {
+ * 				div_element.style.backgroundColor = "red"
+ * 			}
+ * 		},
+ * 		(div_element): void => {
+ * 			if(div_element.style.backgroundColor === "red") {
+ * 				div_element.style.backgroundColor = "blue"
+ * 			}
+ * 		},
+ * 	] as ExecuteProps<HTMLDivElement>
+ * }}>
+ * I'm blue daba dee daba die, If I were green I would die.
+ * </div>
+ * ```
+*/
+export type ExecuteProps<E = Element> = Array<(element: E) => void>
+
 /** the default props assignable to all components (any renderer that inherits from {@link Component_Render | `Component_Render`} will support these). <br>
  * see the details of each on their respective documentation:
  * - for element attributes, see: {@link AttrProps | `AttrProps`}
  * - for element events, see: {@link EventProps | `EventProps`}
  * - for configurable element events, see: {@link AdvancedEventProps | `AdvancedEventProps`}
  * - for element javascript members, see: {@link MemberProps | `MemberProps`}
+ * - for running post-creation functions with the element as the parameter, see: {@link ExecuteProps | `SelfProps`}
 */
 export interface DefaultProps {
 	[ATTRS]?: AttrProps | undefined | null
 	[EVENTS]?: EventProps | undefined | null
 	[ADVANCED_EVENTS]?: AdvancedEventProps | undefined | null
 	[MEMBERS]?: MemberProps | undefined | null
+	[EXECUTE]?: ExecuteProps | undefined | null
 }
 
 /** the props accepted by any {@link ComponentGenerator}, as a single variable. */

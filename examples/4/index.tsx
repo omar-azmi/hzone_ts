@@ -3,14 +3,14 @@
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { Component_Render, DynamicStyleSheet, Fragment_Render, HyperZone, TemplateElement_Render } from "../../src/mod.ts"
-import { ReactiveHTMLElement_Render_Factory } from "../../src/tsignal/mod.ts"
+import { ConvenientReactiveHTMLElement_Render_Factory } from "../../src/tsignal/convenient.ts"
 
 
 const
 	ctx = new Context(),
 	createState = ctx.addClass(StateSignal_Factory),
 	createMemo = ctx.addClass(MemoSignal_Factory),
-	ReactiveHTMLElement_Render = ReactiveHTMLElement_Render_Factory(ctx)
+	ReactiveHTMLElement_Render = ConvenientReactiveHTMLElement_Render_Factory(ctx)
 
 const { h, Fragment, } = HyperZone.create(
 	new Fragment_Render(),
@@ -50,12 +50,12 @@ const MyParagraph = () => {
 */
 
 document.body.append(
-	<MyParagraph on:click={"HEHE"}>
-		<div slot="slot-1">YAHAHA!! you found me</div>
+	<MyParagraph on:click={() => console.log("This will NOT log, because 'MyParagraph' is a document fragment, not just any element. thereby unclickable.")}>
+		<div on:click={() => console.log("This will log, because it is visible to the outer DOM scope, threby clickable.")} slot="slot-1">YAHAHA!! you found me</div>
 	</MyParagraph>,
 	<MyParagraph>
 		<p slot="slot-1">another paragraph</p>
-		<p>ILLEGAL CHILD, BEGONE!! AND DO NOT SHOW YOUR FACE!</p>
+		<p>BEGONE, ILLEGAL CHILD!! THERE IS NO EMPTY SLOT FOR YOU! YOU SHALL NEVER SEE THE LIGHT OF THE Document!</p>
 	</MyParagraph>,
 	<MyParagraph />,
 )

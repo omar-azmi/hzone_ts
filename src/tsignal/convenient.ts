@@ -7,14 +7,14 @@ import type { ReactiveDynamicStylable } from "./styling.ts"
 
 export type ConvenientAttrProps = Record<`attr:${string}`, MaybeAccessor<Stringifiable>>
 
-export type ConvenientExecuteProps<E extends HTMLElement> = Record<`exec:${number}`, (element: E) => void>
+export type ConvenientExecuteProps<E extends HTMLElement> = Record<`exec:$${number}`, (element: E) => void>
 
 export type ConvenientEventProps = {
 	[NAME in keyof HTMLElementEventMap as `on:${NAME}`]?: EventFn<NAME> | [EventFn<NAME>, options?: AddEventListenerOptions]
 }
 
 export type ConvenientMemberProps<E extends HTMLElement> = {
-	[KEY in keyof HTMLElementUniqueMembers<E> as (KEY extends string ? `let:${KEY}` : never)]?: MaybeAccessor<E[KEY]>
+	[KEY in keyof HTMLElementUniqueMembers<E> as (KEY extends string ? `set:${KEY}` : never)]?: MaybeAccessor<E[KEY]>
 }
 
 /**
@@ -37,8 +37,10 @@ export type ReactiveHTMLElementProps<
 	& ConvenientAttrProps
 	& ConvenientExecuteProps<E>
 
-type IntrinsicHTMLElements = { [tagName in keyof HTMLElementTagNameMap]: ReactiveHTMLElementProps & Record<string, MaybeAccessor<AttrValue>> }
-type IntrinsicSVGElements = { [tagName in keyof SVGElementTagNameMap]: ReactiveHTMLElementProps & Record<string, MaybeAccessor<AttrValue>> }
+export type ReactiveComponentProps<P> = P & ReactiveHTMLElementProps
+
+type IntrinsicHTMLElements = { [tagName in keyof HTMLElementTagNameMap]: ReactiveComponentProps<Record<string, MaybeAccessor<AttrValue>>> }
+type IntrinsicSVGElements = { [tagName in keyof SVGElementTagNameMap]: ReactiveComponentProps<Record<string, MaybeAccessor<AttrValue>>> }
 
 /** to get JSX highlighting, assuming your source code directory is `/src/`, create the file `/src/jsx.d.ts`, then fill it with the following:
  * 
@@ -65,14 +67,14 @@ export const convenientPropsRemapper = (props?: Props<ReactiveHTMLElementProps>)
 		object_entries(rest_props).filter(([key, value]) => {
 			if (key.startsWith("on:")) {
 				event_props![key.slice(3)] = value
-			} else if (key.startsWith("let:")) {
+			} else if (key.startsWith("set:")) {
 				member_props![key.slice(4)] = value
 			} else if (key.startsWith("attr:")) {
 				attr_props[key.slice(5)] = value
-			} else if (key.startsWith("exec:")) {
+			} else if (key.startsWith("exec:$")) {
 				// note that the resulting `execute_props` may become a sparse array as a consequence of the assignment below.
 				// thus we will condense it later on using `Array.filter` method.
-				execute_props[number_parseInt(key.slice(5))] = value
+				execute_props[number_parseInt(key.slice(6))] = value
 			} else {
 				// if we make it to here, then the key must be for the component generator itself.
 				// thus we will not filter it out.
@@ -94,18 +96,6 @@ export const convenientPropsRemapper = (props?: Props<ReactiveHTMLElementProps>)
 		[EXECUTE]: execute_props.filter((exec_fn?: ((element: Element) => void)) => exec_fn ? true : false),
 	})
 }
-
-// const a: ReactiveHTMLElementProps<HTMLInputElement> = {
-// 	"on:submit": () => { },
-// 	"on:cancel": [() => { }, { once: true }],
-// 	"let:valueAsNumber": 22,
-// 	style: {
-// 		"--var": "color",
-// 		accentColor: "black"
-// 	},
-// 	"exec:2": (elem) => { },
-// 	"attr:disabled": {}
-// }
 
 export const ConvenientReactiveComponent_Render_Factory = (ctx: Context) => {
 	const base_class = ReactiveComponent_Render_Factory(ctx)

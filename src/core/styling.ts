@@ -1,11 +1,6 @@
-import { ConstructorOf, PreserveStringKeyAndValues, object_assign, object_entries, object_fromEntries } from "../deps.ts"
+import { ConstructorOf, object_assign, object_entries, object_fromEntries } from "../deps.ts"
+import { Stylable, StyleProps } from "../typedefs.ts"
 
-
-export type CSSVarProps = { [var_name: `--${string}`]: string | undefined }
-export type StyleRuleProps = Partial<PreserveStringKeyAndValues<CSSStyleDeclaration> & CSSVarProps>
-export interface Stylable {
-	style: CSSStyleDeclaration
-}
 
 export class DynamicStylable {
 	protected parent: Stylable
@@ -14,7 +9,7 @@ export class DynamicStylable {
 		this.parent = stylable_object
 	}
 
-	setStyle(style: StyleRuleProps) {
+	setStyle(style: StyleProps) {
 		// css variables must be set via `setProperty()` method, otherwise they don't work when applied via `Object.assign`
 		const object_style = this.parent.style
 		style = object_fromEntries(
@@ -68,7 +63,7 @@ export class DynamicStyleSheet<STYLE_CONTROLLER extends DynamicStylable> {
 		return this.stylables.get(selector)
 	}
 
-	setRule(selector: Selector, style: StyleRuleProps = {}): STYLE_CONTROLLER {
+	setRule(selector: Selector, style: StyleProps = {}): STYLE_CONTROLLER {
 		let rule_controller = this.getRule(selector)
 		if (!rule_controller) {
 			const

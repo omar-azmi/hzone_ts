@@ -1,8 +1,11 @@
 import type { Component_Render } from "./core/mod.ts"
-import { DEBUG, bindMethodToSelfByName } from "./deps.ts"
+import { DEBUG, PreserveStringKeyAndValues, bindMethodToSelfByName } from "./deps.ts"
 
 /** any object or primitive that implements the `toString` method. */
 export type Stringifiable = { toString(): string }
+
+/** any object (usually an `HTMLElement`, or a `CSSStyleRule` inside of a `StyleSheet`) that can by styled. */
+export interface Stylable { style: CSSStyleDeclaration }
 
 /** a truthy value assigned to the attribute of an `Element` will get converted to an empty string `""`,
  * so that it renders as an attribute without a value. (for instance, the `checked` attribute of `<input type="checkbox" checked />`)
@@ -135,6 +138,11 @@ export type MemberProps<E = Element> = {
 	[member_key in keyof E]?: E[member_key]
 }
 
+/** the key used for explicitly declaring style assignments to make on the generated output of any {@link HyperRender.h | `Element Renderer`}. */
+export const STYLE = Symbol(DEBUG.MINIFY || "explicitly declared element style to apply")
+export type CSSVarProps = { [var_name: `--${string}`]: string | undefined }
+export type StyleProps = Partial<PreserveStringKeyAndValues<CSSStyleDeclaration> & CSSVarProps>
+
 /** the key used for explicitly declaring an array of functions to execute on the generated output element of any {@link HyperRender.h | `Element Renderer`} as the first parameter. */
 export const EXECUTE = Symbol(DEBUG.MINIFY || "explicitly declared list of functions to execute on the element itself after its creation")
 
@@ -170,6 +178,7 @@ export type ExecuteProps<E = Element> = Array<(element: E) => void>
  * - for element events, see: {@link EventProps | `EventProps`}
  * - for configurable element events, see: {@link AdvancedEventProps | `AdvancedEventProps`}
  * - for element javascript members, see: {@link MemberProps | `MemberProps`}
+ * - for element dynamic styling, see: {@link StyleProps | `StyleProps`}
  * - for running post-creation functions with the element as the parameter, see: {@link ExecuteProps | `SelfProps`}
 */
 export interface DefaultProps {
@@ -177,6 +186,7 @@ export interface DefaultProps {
 	[EVENTS]?: EventProps | undefined | null
 	[ADVANCED_EVENTS]?: AdvancedEventProps | undefined | null
 	[MEMBERS]?: MemberProps | undefined | null
+	[STYLE]?: StyleProps | undefined | null
 	[EXECUTE]?: ExecuteProps | undefined | null
 }
 

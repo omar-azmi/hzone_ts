@@ -68,7 +68,8 @@
 
 import { array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
 import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EXECUTE, EventFn, Fragment, HyperRender, MEMBERS, Props } from "../typedefs.ts"
+import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EXECUTE, EventFn, Fragment, HyperRender, MEMBERS, Props, STYLE, Stylable, StyleProps } from "../typedefs.ts"
+import { DynamicStylable } from "./styling.ts"
 
 
 export class Component_Render<G extends ComponentGenerator = ComponentGenerator> extends HyperRender<G> {
@@ -96,6 +97,10 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 		}
 		for (const [member_key, member_value] of object_entries(props[MEMBERS] ?? {})) {
 			this.setMember(component_node, member_key as any, member_value as any)
+		}
+		const style = props[STYLE]
+		if (style) {
+			this.setStyle(component_node as unknown as Stylable, style)
 		}
 		for (const fn of (props[EXECUTE] ?? [])) {
 			this.executeFn(component_node, fn)
@@ -140,6 +145,12 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 
 	protected setMember<E = Element>(element: E, key: keyof E, value: E[typeof key]): void {
 		element[key] = value
+	}
+
+	protected setStyle(element: Stylable, style: StyleProps): DynamicStylable {
+		const dynamic_stylable = new DynamicStylable(element)
+		dynamic_stylable.setStyle(style)
+		return dynamic_stylable
 	}
 
 	protected executeFn<E = Element>(element: E, fn: (element: E) => void) {

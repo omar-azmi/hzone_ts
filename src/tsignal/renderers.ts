@@ -1,16 +1,16 @@
-import { Accessor, Context, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
 import { Component_Render, FragmentTagComponent, HTMLTagComponent, SVGTagComponent } from "../core/renderers.ts"
+import { DynamicStylable } from "../core/styling.ts"
 import { isFunction } from "../deps.ts"
 import { normalizeAttrProps, stringify, stringifyAttrValue } from "../funcdefs.ts"
-import { AttrValue, ComponentGenerator, Fragment, Props, TextValue } from "../typedefs.ts"
+import { AttrValue, ComponentGenerator, Fragment, Props, Stylable, StyleProps, TextValue } from "../typedefs.ts"
+import { Accessor, Context, EffectSignal_Factory, MaybeAccessor, ReactiveStyleProps } from "./deps.ts"
+import { ReactiveDynamicStylable } from "./styling.ts"
 
 
-export type MaybeAccessor<T> = T | Accessor<T>
 const
 	isAccessor_AttrValue = isFunction as ((obj: any) => obj is Accessor<AttrValue>),
 	isAccessor_TextValue = isFunction as ((obj: any) => obj is Accessor<TextValue>),
 	isAccessor_MemberValue = isFunction as ((obj: any) => obj is Accessor<any>)
-
 
 export const ReactiveComponent_Render_Factory = (ctx: Context) => {
 	const createEffect = ctx.addClass(EffectSignal_Factory)
@@ -72,6 +72,20 @@ export const ReactiveComponent_Render_Factory = (ctx: Context) => {
 					return !value_has_changed
 				}, { defer: false })
 			}
+		}
+
+		protected setStyle(element: Stylable, style: ReactiveStyleProps | MaybeAccessor<StyleProps>): DynamicStylable {
+			const
+				style_is_accessor = isFunction(style),
+				dynamic_stylable = style_is_accessor
+					? new DynamicStylable(element)
+					: new ReactiveDynamicStylable(createEffect, element)
+			if (style_is_accessor) {
+				createEffect((id) => { dynamic_stylable.setStyle(style(id)) }, { defer: false })
+			} else {
+				(dynamic_stylable as ReactiveDynamicStylable).setStyle(style as ReactiveStyleProps)
+			}
+			return dynamic_stylable
 		}
 
 		protected processChild(child: MaybeAccessor<TextValue> | Node): string | Node {

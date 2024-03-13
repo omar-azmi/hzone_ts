@@ -1,9 +1,7 @@
-import { Component_Render, FragmentTagComponent, HTMLTagComponent, SVGTagComponent } from "../core/renderers.ts"
-import { DynamicStylable } from "../core/styling.ts"
 import { isFunction } from "../deps.ts"
 import { normalizeAttrProps, stringify, stringifyAttrValue } from "../funcdefs.ts"
 import { AttrValue, ComponentGenerator, Fragment, Props, Stylable, StyleProps, TextValue } from "../typedefs.ts"
-import { Accessor, Context, EffectSignal_Factory, MaybeAccessor, ReactiveStyleProps } from "./deps.ts"
+import { Accessor, Component_Render, Context, DynamicStylable, EffectSignal_Factory, FragmentTagComponent, HTMLTagComponent, MaybeAccessor, ReactiveStyleProps, SVGTagComponent } from "./deps.ts"
 import { ReactiveDynamicStylable } from "./styling.ts"
 
 

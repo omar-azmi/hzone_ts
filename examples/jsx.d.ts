@@ -14,16 +14,5 @@
  * @module
 */
 
-import type { MaybeAccessor } from "../src/tsignal/mod.ts"
-import type { AttrValue } from "../src/typedefs.ts"
-
-type AttributeKey = string
-interface Attributes {
-	[key: AttributeKey]: MaybeAccessor<AttrValue>
-}
-
-type IntrinsicHTMLElements = { [tagName in keyof HTMLElementTagNameMap]: Attributes }
-type IntrinsicSVGElements = { [tagName in keyof SVGElementTagNameMap]: Attributes }
-export type IntrinsicElements = IntrinsicHTMLElements & IntrinsicSVGElements
-
+export { IntrinsicElements } from "../src/tsignal/convenient.ts"
 export as namespace JSX

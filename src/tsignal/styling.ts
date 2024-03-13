@@ -1,7 +1,6 @@
-import { DynamicStylable } from "../core/styling.ts"
 import { isFunction, object_entries, object_fromEntries } from "../deps.ts"
 import { Stylable, StyleProps } from "../typedefs.ts"
-import { CreateEffect, ReactiveStyleProps } from "./deps.ts"
+import { CreateEffect, DynamicStylable, ReactiveStyleProps } from "./deps.ts"
 
 
 export class ReactiveDynamicStylable extends DynamicStylable {

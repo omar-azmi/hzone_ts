@@ -1,5 +1,7 @@
 export { Context, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
 export type { Accessor } from "jsr:@oazmi/tsignal"
+export { Component_Render, FragmentTagComponent, HTMLTagComponent, SVGTagComponent } from "../core/renderers.ts"
+export { DynamicStylable } from "../core/styling.ts"
 import type { Accessor, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
 import { StyleProps } from "../typedefs.ts"
 

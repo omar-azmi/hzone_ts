@@ -1,5 +1,5 @@
 export { bindMethodToSelfByName } from "jsr:@oazmi/kitchensink@0.7.5/binder"
-export { array_isArray, console_error, object_assign, object_entries, object_fromEntries } from "jsr:@oazmi/kitchensink@0.7.5/builtin_aliases_deps"
+export { array_isArray, console_error, number_parseInt, object_assign, object_entries, object_fromEntries } from "jsr:@oazmi/kitchensink@0.7.5/builtin_aliases_deps"
 export { isFunction } from "jsr:@oazmi/kitchensink@0.7.5/struct"
 export type { ConstructorOf } from "jsr:@oazmi/kitchensink@0.7.5/typedefs"
 
@@ -48,3 +48,5 @@ I think this feature should be implemented inside of the `processChild` method.
 //       they've got their own set of rules for cloning (shadow root and stuff) and appending (template_dom.content.append),
 //       so the standard html component generator/renderer is not suitable for it.
 // DONE: purge the use of symbols to change scopes, and instead plug in the instances of the render classes directly into the zone.
+// TODO: implement classList convenience property key for reactive classes
+// TODO: purge `[ADVANCED_EVENTS]` and replace it with `[EVENTS]`, and make the base component class take care of inferring which kind it is.

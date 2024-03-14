@@ -1,19 +1,20 @@
 import { isFunction, number_parseInt, object_assign, object_entries, object_fromEntries } from "../deps.ts"
 import { ATTRS, AttrValue, ComponentGenerator, EVENTS, EXECUTE, EventFn, ExecuteProps, MEMBERS, Props, STYLE, Stringifiable, StyleProps } from "../typedefs.ts"
 import { type Accessor, type Context, type DynamicStylable, type HTMLElementUniqueMembers, type MaybeAccessor, type ReactiveStyleProps } from "./deps.ts"
+import { HTMLElementTagSpecificAttributes, SVGElementTagSpecificAttributes } from "./dom_attribute_types.ts"
 import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "./renderers.ts"
 import type { ReactiveDynamicStylable } from "./styling.ts"
 
 
 export type ConvenientAttrProps = Record<`attr:${string}`, MaybeAccessor<Stringifiable>>
 
-export type ConvenientExecuteProps<E extends HTMLElement> = Record<`exec:$${number}`, (element: E) => void>
+export type ConvenientExecuteProps<E extends Element> = Record<`exec:$${number}`, (element: E) => void>
 
 export type ConvenientEventProps = {
 	[NAME in keyof HTMLElementEventMap as `on:${NAME}`]?: EventFn<NAME> | [EventFn<NAME>, options?: AddEventListenerOptions]
 }
 
-export type ConvenientMemberProps<E extends HTMLElement> = {
+export type ConvenientMemberProps<E extends Element> = {
 	[KEY in keyof HTMLElementUniqueMembers<E> as (KEY extends string ? `set:${KEY}` : never)]?: MaybeAccessor<E[KEY]>
 }
 
@@ -29,18 +30,36 @@ export type ConvenientStyleProps = {
 	style?: ReactiveStyleProps | Accessor<StyleProps> | MaybeAccessor<string>
 }
 
-export type ReactiveHTMLElementProps<
-	E extends HTMLElement = HTMLElement
+export type ConvenientElementProps<
+	E extends Element = HTMLElement
 > = & ConvenientStyleProps
 	& ConvenientEventProps
 	& ConvenientMemberProps<E>
 	& ConvenientAttrProps
 	& ConvenientExecuteProps<E>
 
-export type ReactiveComponentProps<P> = P & ReactiveHTMLElementProps
+export type ReactiveComponentProps<P, E extends HTMLElement = HTMLElement> = ConvenientElementProps<E> & Props<P>
+// type ImportantHTMLAttributes = keyof Omit<AllHTMLAttributes<any>, A | keyof DOMAttributes<any> | keyof AriaAttributes>
+// type ImportantSVGAttributes = keyof Omit<SVGAttributes<any>, keyof DOMAttributes<any> | keyof AriaAttributes>
+// type ReactiveElementProps<
+// 	E extends Element,
+// 	ConvenientProps extends ConvenientElementProps<E> = ConvenientElementProps<E>
+// > = ConvenientProps & Partial<Record<ImportantHTMLAttributes, MaybeAccessor<AttrValue>>>
+// type ReactiveSVGElementProps<
+// 	E extends SVGElement,
+// 	ConvenientProps extends ConvenientElementProps<E> = ConvenientElementProps<E>
+// > = ConvenientProps & Partial<Record<ImportantSVGAttributes, MaybeAccessor<AttrValue>>>
 
-type IntrinsicHTMLElements = { [tagName in keyof HTMLElementTagNameMap]: ReactiveComponentProps<Record<string, MaybeAccessor<AttrValue>>> }
-type IntrinsicSVGElements = { [tagName in keyof SVGElementTagNameMap]: ReactiveComponentProps<Record<string, MaybeAccessor<AttrValue>>> }
+type IntrinsicHTMLElements = {
+	[TagName in keyof HTMLElementTagNameMap]:
+	& ConvenientElementProps<HTMLElementTagNameMap[TagName]>
+	& Partial<Record<HTMLElementTagSpecificAttributes[TagName], MaybeAccessor<AttrValue>>>
+}
+type IntrinsicSVGElements = {
+	[TagName in keyof SVGElementTagNameMap]:
+	& ConvenientElementProps<SVGElementTagNameMap[TagName]>
+	& Partial<Record<SVGElementTagSpecificAttributes[TagName], MaybeAccessor<AttrValue>>>
+}
 
 /** to get JSX highlighting, assuming your source code directory is `/src/`, create the file `/src/jsx.d.ts`, then fill it with the following:
  * 
@@ -52,7 +71,7 @@ type IntrinsicSVGElements = { [tagName in keyof SVGElementTagNameMap]: ReactiveC
 */
 export type IntrinsicElements = IntrinsicHTMLElements & IntrinsicSVGElements
 
-export const convenientPropsRemapper = (props?: Props<ReactiveHTMLElementProps>): Props<any> => {
+export const convenientPropsRemapper = (props?: Props<ConvenientElementProps>): Props<any> => {
 	const {
 		// [STYLE]: style_props, // do not use the `[STYLE]` symbol prop key for convenient renderers
 		style: style_props = {},
@@ -103,7 +122,7 @@ export const ConvenientReactiveComponent_Render_Factory = (ctx: Context) => {
 		h<
 			C extends G,
 			P extends (C extends ComponentGenerator<infer PROPS> ? PROPS : undefined | null | object) = any
-		>(component: C, props: Props<P & ReactiveHTMLElementProps>, ...children: (string | Node)[]): ReturnType<C> {
+		>(component: C, props: Props<P & ConvenientElementProps>, ...children: (string | Node)[]): ReturnType<C> {
 			return super.h(component, convenientPropsRemapper(props), ...children)
 		}
 	}
@@ -112,7 +131,7 @@ export const ConvenientReactiveComponent_Render_Factory = (ctx: Context) => {
 export const ConvenientReactiveHTMLElement_Render_Factory = (ctx: Context) => {
 	const base_class = ReactiveHTMLElement_Render_Factory(ctx)
 	return class ConvenientReactiveHTMLElement_Render_Factory extends base_class {
-		h<TAG extends keyof HTMLElementTagNameMap>(tag: TAG, props?: null | Props<ReactiveHTMLElementProps>, ...children: (string | Node)[]): HTMLElementTagNameMap[TAG] {
+		h<TAG extends keyof HTMLElementTagNameMap>(tag: TAG, props?: null | Props<ConvenientElementProps>, ...children: (string | Node)[]): HTMLElementTagNameMap[TAG] {
 			return super.h(tag, convenientPropsRemapper(props!), ...children)
 		}
 	}
@@ -121,7 +140,7 @@ export const ConvenientReactiveHTMLElement_Render_Factory = (ctx: Context) => {
 export const ConvenientReactiveSVGElement_Render_Factory = (ctx: Context) => {
 	const base_class = ReactiveSVGElement_Render_Factory(ctx)
 	return class ConvenientReactiveSVGElement_Render_Factory extends base_class {
-		h<TAG extends keyof SVGElementTagNameMap>(tag: TAG, props?: null | Props<ReactiveHTMLElementProps>, ...children: (string | Node)[]): SVGElementTagNameMap[TAG] {
+		h<TAG extends keyof SVGElementTagNameMap>(tag: TAG, props?: null | Props<ConvenientElementProps>, ...children: (string | Node)[]): SVGElementTagNameMap[TAG] {
 			return super.h(tag, convenientPropsRemapper(props!), ...children)
 		}
 	}

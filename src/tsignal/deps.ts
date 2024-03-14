@@ -8,5 +8,5 @@ import { StyleProps } from "../typedefs.ts"
 
 export type MaybeAccessor<T> = T | Accessor<T>
 export type ReactiveStyleProps = { [K in keyof StyleProps]: MaybeAccessor<StyleProps[K]> }
-export type HTMLElementUniqueMembers<E extends HTMLElement> = Omit<E, keyof Element | keyof GlobalEventHandlers | keyof ElementCSSInlineStyle>
+export type HTMLElementUniqueMembers<E extends Element> = Omit<E, keyof Element | keyof GlobalEventHandlers | keyof ElementCSSInlineStyle>
 export type CreateEffect = ReturnType<typeof EffectSignal_Factory>["create"]

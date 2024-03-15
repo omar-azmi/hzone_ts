@@ -1,7 +1,7 @@
 import { isFunction, number_parseInt, object_assign, object_entries, object_fromEntries } from "../deps.ts"
+import { HTMLTagNames, IntrinsicHTMLElements_Factory, IntrinsicSVGElements_Factory, SVGTagNames, } from "../dom_core/mod.ts"
 import { ATTRS, AttrValue, ComponentGenerator, EVENTS, EXECUTE, EventFn, ExecuteProps, MEMBERS, Props, STYLE, Stringifiable, StyleProps } from "../typedefs.ts"
 import { type Accessor, type Context, type DynamicStylable, type HTMLElementUniqueMembers, type MaybeAccessor, type ReactiveStyleProps } from "./deps.ts"
-import { HTMLElementTagSpecificAttributes, SVGElementTagSpecificAttributes } from "./dom_attribute_types.ts"
 import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "./renderers.ts"
 import type { ReactiveDynamicStylable } from "./styling.ts"
 
@@ -39,27 +39,21 @@ export type ConvenientElementProps<
 	& ConvenientExecuteProps<E>
 
 export type ReactiveComponentProps<P, E extends HTMLElement = HTMLElement> = ConvenientElementProps<E> & Props<P>
-// type ImportantHTMLAttributes = keyof Omit<AllHTMLAttributes<any>, A | keyof DOMAttributes<any> | keyof AriaAttributes>
-// type ImportantSVGAttributes = keyof Omit<SVGAttributes<any>, keyof DOMAttributes<any> | keyof AriaAttributes>
-// type ReactiveElementProps<
-// 	E extends Element,
-// 	ConvenientProps extends ConvenientElementProps<E> = ConvenientElementProps<E>
-// > = ConvenientProps & Partial<Record<ImportantHTMLAttributes, MaybeAccessor<AttrValue>>>
-// type ReactiveSVGElementProps<
-// 	E extends SVGElement,
-// 	ConvenientProps extends ConvenientElementProps<E> = ConvenientElementProps<E>
-// > = ConvenientProps & Partial<Record<ImportantSVGAttributes, MaybeAccessor<AttrValue>>>
 
-type IntrinsicHTMLElements = {
-	[TagName in keyof HTMLElementTagNameMap]:
-	& ConvenientElementProps<HTMLElementTagNameMap[TagName]>
-	& Partial<Record<HTMLElementTagSpecificAttributes[TagName], MaybeAccessor<AttrValue>>>
+type ConvenientElementProps_ByHTMLTagName = {
+	[TagName in HTMLTagNames]: ConvenientElementProps<HTMLElementTagNameMap[TagName]>
 }
-type IntrinsicSVGElements = {
-	[TagName in keyof SVGElementTagNameMap]:
-	& ConvenientElementProps<SVGElementTagNameMap[TagName]>
-	& Partial<Record<SVGElementTagSpecificAttributes[TagName], MaybeAccessor<AttrValue>>>
+type IntrinsicHTMLElements = IntrinsicHTMLElements_Factory<
+	ConvenientElementProps_ByHTMLTagName,
+	MaybeAccessor<AttrValue>
+>
+type ConvenientElementProps_BySVGTagName = {
+	[TagName in SVGTagNames]: ConvenientElementProps<SVGElementTagNameMap[TagName]>
 }
+type IntrinsicSVGElements = IntrinsicSVGElements_Factory<
+	ConvenientElementProps_BySVGTagName,
+	MaybeAccessor<AttrValue>
+>
 
 /** to get JSX highlighting, assuming your source code directory is `/src/`, create the file `/src/jsx.d.ts`, then fill it with the following:
  * 

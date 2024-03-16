@@ -1,5 +1,5 @@
 import type { Component_Render } from "./core/mod.ts"
-import { DEBUG, PreserveStringKeyAndValues, bindMethodToSelfByName } from "./deps.ts"
+import { DEBUG, HTMLEventNames, PreserveStringKeyAndValues, bindMethodToSelfByName } from "./deps.ts"
 
 /** any object or primitive that implements the `toString` method. */
 export type Stringifiable = { toString(): string }
@@ -63,7 +63,9 @@ export const ATTRS = Symbol(DEBUG.MINIFY || "explicitly declared Element attribu
 export type AttrProps = { [attr: string]: any }
 
 /** mapped dictionary of all standard HTMLEvents */
-export type EventFn<NAME extends keyof HTMLElementEventMap> = (this: Element, event: HTMLElementEventMap[NAME]) => void
+export type EventFn<NAME extends HTMLEventNames> = (this: Element, event: HTMLElementEventMap[NAME]) => void
+
+export type AdvancedEventFn<NAME extends HTMLEventNames> = [event_fn: EventFn<NAME>, options?: boolean | AddEventListenerOptions]
 
 /** the key used for explicitly declaring event handling functions on the output of any {@link HyperRender.h | `Element Renderer`}. */
 export const EVENTS = Symbol(DEBUG.MINIFY || "explicitly declared event listeners of a single Component")
@@ -88,7 +90,7 @@ export const EVENTS = Symbol(DEBUG.MINIFY || "explicitly declared event listener
  * ```
 */
 export type EventProps = {
-	[event_name in keyof HTMLElementEventMap]?: EventFn<event_name>
+	[event_name in HTMLEventNames]?: EventFn<event_name>
 }
 
 /** the key used for explicitly declaring advanced event handling functions on the output of any {@link HyperRender.h | `Element Renderer`}. */
@@ -111,7 +113,7 @@ export const ADVANCED_EVENTS = Symbol(DEBUG.MINIFY || "explicitly declared advac
  * ```
 */
 export type AdvancedEventProps = {
-	[event_name in keyof HTMLElementEventMap]?: [event_fn: EventFn<event_name>, options?: boolean | AddEventListenerOptions]
+	[event_name in HTMLEventNames]?: [event_fn: EventFn<event_name>, options?: boolean | AddEventListenerOptions]
 }
 
 /** the key used for explicitly declaring member assignments to make on the generated output of any {@link HyperRender.h | `Element Renderer`}. */

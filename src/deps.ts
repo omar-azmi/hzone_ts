@@ -16,6 +16,11 @@ export const enum DEBUG {
 export const dom_customElements = globalThis.customElements
 
 export type PreserveStringKeyAndValues<T> = { [K in keyof T as (K extends string ? T[K] extends string ? K : never : never)]: T[K] }
+export type HTMLTagNames = keyof HTMLElementTagNameMap
+export type SVGTagNames = keyof SVGElementTagNameMap
+export type HTMLEventNames = keyof HTMLElementEventMap
+export type SVGEventNames = HTMLEventNames // equivalent to `keyof SVGElementEventMap`
+export type HTMLElementUniqueMemberKeys<E extends Element> = keyof Omit<E, symbol | number | keyof Element | keyof GlobalEventHandlers | keyof ElementCSSInlineStyle>
 
 
 // TODO: add a `[REFS]` symbol in `DefaultProps`, which will allow the user to set the props of user-named child components inside of the component generator.

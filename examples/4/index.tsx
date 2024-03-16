@@ -3,7 +3,7 @@
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { Component_Render, DynamicStyleSheet, Fragment_Render, HyperZone, TemplateElement_Render } from "../../src/mod.ts"
-import { ConvenientReactiveHTMLElement_Render_Factory } from "../../src/tsignal/convenient.ts"
+import { ConvenientReactiveHTMLElement_Render_Factory } from "../../src/tsignal/mod.ts"
 
 
 const

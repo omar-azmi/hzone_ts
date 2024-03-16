@@ -2,7 +2,7 @@
 /** @jsxFrag Fragment */
 
 import { ATTRS, AttrProps, DynamicStylable, EVENTS, EXECUTE, EventProps, MEMBERS, MemberProps } from "../../src/mod.ts"
-import { MaybeAccessor } from "../../src/tsignal/mod.ts"
+import { MaybeAccessor } from "../../src/tsignal_base/mod.ts"
 import { Clock } from "../2/clock.tsx"
 import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, throttlingEquals } from "../2/deps.ts"
 

@@ -3,11 +3,11 @@
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { HyperZone } from "../../src/mod.ts"
-import { ConvenientReactiveComponent_Render_Factory, ConvenientReactiveFragment_Render_Factory, ConvenientReactiveHTMLElement_Render_Factory, ConvenientReactiveSVGElement_Render_Factory } from "../../src/tsignal/convenient.ts"
+import { ConvenientReactiveComponent_Render_Factory, ConvenientReactiveFragment_Render_Factory, ConvenientReactiveHTMLElement_Render_Factory, ConvenientReactiveSVGElement_Render_Factory } from "../../src/tsignal/mod.ts"
 export { throttlingEquals } from "jsr:@oazmi/tsignal"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
 export type { ComponentGenerator, FragmentComponentGenerator } from "../../src/mod.ts"
-export type { ReactiveComponentProps } from "../../src/tsignal/convenient.ts"
+export type { ReactiveComponentProps } from "../../src/tsignal/mod.ts"
 
 export const
 	ctx = new Context(),

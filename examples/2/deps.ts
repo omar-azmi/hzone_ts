@@ -4,7 +4,7 @@
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { object_entries } from "../../src/deps.ts"
 import { HyperZone } from "../../src/mod.ts"
-import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "../../src/tsignal/mod.ts"
+import { ReactiveComponent_Render_Factory, ReactiveFragment_Render_Factory, ReactiveHTMLElement_Render_Factory, ReactiveSVGElement_Render_Factory } from "../../src/tsignal_base/mod.ts"
 export { throttlingEquals } from "jsr:@oazmi/tsignal"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
 export { ATTRS } from "../../src/mod.ts"

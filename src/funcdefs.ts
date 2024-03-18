@@ -1,4 +1,5 @@
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, EVENTS, MEMBERS, Props, EXECUTE, Stringifiable, STYLE } from "./typedefs.ts"
+import { ADVANCED_EVENTS, ATTRS, AttrProps, EVENTS, EXECUTE, MEMBERS, STYLE } from "./symbol_props.ts"
+import { AttrValue, Props, Stringifiable } from "./typedefs.ts"
 
 
 export const

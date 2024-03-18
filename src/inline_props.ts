@@ -1,9 +1,10 @@
 /** this module defines a set of convenient inline attribute/property naming guide */
 
-import { number_parseInt, object_assign, object_entries, object_fromEntries, type HTMLElementUniqueMemberKeys, type HTMLEventNames, type HTMLTagNames, type SVGEventNames, type SVGTagNames, } from "../deps.ts"
-import { ATTRS, EVENTS, EXECUTE, MEMBERS, STYLE, type AdvancedEventFn, type EventFn, type Props } from "../typedefs.ts"
-import type { HTMLTagNameAttributesMap } from "./html_attributes_map.ts"
-import type { SVGTagNameAttributesMap } from "./svg_attributes_map.ts"
+import { HTMLElementUniqueMemberKeys, HTMLEventNames, HTMLTagNames, SVGEventNames, SVGTagNames, number_parseInt, object_assign, object_entries, object_fromEntries, } from "./deps.ts"
+import type { HTMLTagNameAttributesMap } from "./dom_core/html_attributes_map.ts"
+import type { SVGTagNameAttributesMap } from "./dom_core/svg_attributes_map.ts"
+import { ATTRS, AdvancedEventFn, EVENTS, EXECUTE, EventFn, MEMBERS, STYLE } from "./symbol_props.ts"
+import type { Props } from "./typedefs.ts"
 
 /** when explicitly declaring a prop to be of an attribute kind, use the `attr:` prefix to specify. <br>
  * examples: `attr:id`, `attr:style`, `attr:class`, and `attr:href`. <br>
@@ -28,9 +29,7 @@ import type { SVGTagNameAttributesMap } from "./svg_attributes_map.ts"
 */
 export type InlineAttrName<QualifiedAttributeNames extends string = string> = `attr:${QualifiedAttributeNames}`
 
-/** the function signature of functions executable via jsx {@link InlineExecuteName | `InlineExecuteName`},
- * right after the element has been created
-*/
+/** the function signature of functions executable via jsx {@link InlineExecuteName | `InlineExecuteName`}, right after the element has been created. */
 export type InlineExecuteFn<E extends Element = Element> = (new_element: E) => void
 
 /** when explicitly declaring function to execute right after the creation of the element, use the `exec:$` prefix to specify the order in which it should be ran. <br>
@@ -106,17 +105,16 @@ export type InlineEventName<QualifiedEventNames extends string = HTMLEventNames>
 */
 export type InlineMemberName<QualifiedMemberNames extends string = HTMLElementUniqueMemberKeys<any>> = `set:${QualifiedMemberNames}`
 
-type GenericInlineProps = {
+export interface InlineDefaultProps {
 	style?: any
 	[attribute_name: `attr:${string}`]: any
 	[execute_function_in_order: `exec:$${number}`]: any
 	[set_element_member: `set:${string}`]: any
 	[event_name: `on:${string}`]: any
 }
-// Record<| `style` | `on:${string}` | `set:${string}` | `attr:${string}` | `exec:$${number}`, any>
 
 /** remaps the inlined attributes/properties into their standard symbol fields, so that they become {@link Props} compliant. */
-export const inlinePropsRemapper = (props?: Props<GenericInlineProps> | any): Props<any> => {
+export const inlinePropsRemapper = (props?: Props<InlineDefaultProps> | any): Props<any> => {
 	const {
 		// [STYLE]: style_props, // do not use the `[STYLE]` symbol prop key for convenient renderers
 		style: style_props = {},

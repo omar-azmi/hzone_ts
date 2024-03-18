@@ -1,9 +1,16 @@
 import { DEBUG, console_error } from "./deps.ts"
+import type { Context } from "./tsignal_base/deps.ts"
 import { Fragment, HyperRender } from "./typedefs.ts"
 
 
 type HyperZoneChild = typeof PushZone | typeof PopZone | Node
 type HyperZoneChildren = (HyperZoneChild | Array<HyperZoneChild>)[]
+// type RenderGroupLibraries = "vanilla" | "tsignal" | "react" | "solid"
+export interface HyperZoneContext {
+	vanilla?: undefined
+	tsignal?: { ctx: Context }
+	react?: { createElement: any }
+}
 
 const
 	PushZone = Symbol(DEBUG.MINIFY || "pushed a zone"),
@@ -11,6 +18,7 @@ const
 	node_only_child_filter = (child: symbol | Node) => (typeof child !== "symbol")
 
 export class HyperZone extends HyperRender<any, any> {
+	public ctx: HyperZoneContext = {}
 	protected zones: Array<HyperRender[]> = []
 
 	constructor(...default_zone: HyperRender[]) {

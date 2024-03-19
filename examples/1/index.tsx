@@ -2,28 +2,30 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { ATTRS, Component_Render, EVENTS, Fragment_Render, HyperZone, SVGElement_Render } from "../../src/mod.ts"
-import { ReactiveHTMLElement_Render_Factory } from "../../src/tsignal_base/mod.ts"
+import { ATTRS, EVENTS, HyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaSVGElementRender } from "../../src/mod.ts"
+import { TsignalHTMLRender } from "../../src/tsignal_base/mod.ts"
 
 
 const
 	ctx = new Context(),
 	createState = ctx.addClass(StateSignal_Factory),
 	createMemo = ctx.addClass(MemoSignal_Factory),
-	ReactiveHTMLElement_Render = ReactiveHTMLElement_Render_Factory(ctx)
+	reactive_html_renderer = new TsignalHTMLRender({ ctx })
 
 const {
 	h,
 	Fragment,
 	pushZone,
 	popZone,
-} = HyperZone.create(
-	new Fragment_Render(),
-	new ReactiveHTMLElement_Render(),
-	new Component_Render(),
-)
+} = HyperZone.create({
+	default: [
+		new VanillaFragmentRender(),
+		reactive_html_renderer,
+		new VanillaComponentRender()
+	]
+})
 
-const svg_renderer = new SVGElement_Render()
+const svg_renderer = new VanillaSVGElementRender()
 
 const MyDiv = ({ width = 100, height = 50 } = {}) => {
 	const [, getTime, setTime] = createState(Date.now() / 1000)

@@ -14,5 +14,5 @@
  * @module
 */
 
-export { IntrinsicElements } from "../src/tsignal/mod.ts"
+export { IntrinsicElements } from "../src/tsignal_inline/mod.ts"
 export as namespace JSX

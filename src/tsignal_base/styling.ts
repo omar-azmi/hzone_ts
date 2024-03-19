@@ -1,6 +1,6 @@
 import { isFunction, object_entries, object_fromEntries } from "../deps.ts"
 import { Stylable, StyleProps } from "../typedefs.ts"
-import { CreateEffect, DynamicStylable, ReactiveStyleProps } from "./deps.ts"
+import { CreateEffect, DynamicStylable, TsignalStyleProps } from "./deps.ts"
 
 
 export class ReactiveDynamicStylable extends DynamicStylable {
@@ -11,7 +11,7 @@ export class ReactiveDynamicStylable extends DynamicStylable {
 		this.createEffect = createEffect
 	}
 
-	setStyle(style: ReactiveStyleProps) {
+	setStyle(style: TsignalStyleProps) {
 		const
 			object_style = this.parent.style,
 			createEffect = this.createEffect

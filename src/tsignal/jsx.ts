@@ -1,5 +1,5 @@
 import type { HTMLElementUniqueMemberKeys, HTMLEventNames, HTMLTagNames, InlineAttrName, InlineEventName, InlineExecuteFn, InlineExecuteName, InlineMemberName, IntrinsicHTMLElements_Factory, IntrinsicSVGElements_Factory, SVGTagNames } from "../dom_core/mod.ts"
-import type { Accessor, DynamicStylable, MaybeAccessor, ReactiveStyleProps } from "../tsignal_base/deps.ts"
+import type { Accessor, DynamicStylable, MaybeAccessor, TsignalStyleProps } from "../tsignal_base/deps.ts"
 import type { ReactiveDynamicStylable } from "../tsignal_base/styling.ts"
 import type { AttrValue, EventFn, Props, Stringifiable, StyleProps } from "../typedefs.ts"
 
@@ -25,7 +25,7 @@ type InlineMemberProps<E extends Element> = {
  * - `ReactiveStyleProps` will create an underlying {@link ReactiveDynamicStylable | `ReactiveDynamicStylable`}, which will only update the modified property via `element.style.setProperty(the_reactive_style.["changedMember"])`.
 */
 type InlineStyleProps = {
-	style?: ReactiveStyleProps | Accessor<StyleProps> | MaybeAccessor<string>
+	style?: TsignalStyleProps | Accessor<StyleProps> | MaybeAccessor<string>
 }
 
 export type DefaultElementProps<

@@ -1,9 +1,9 @@
-export type { Accessor, MaybeAccessor, ReactiveStyleProps } from "./deps.ts"
+export type { Accessor, MaybeAccessor, TsignalStyleProps } from "./deps.ts"
 export {
-	ReactiveComponent_Render_Factory,
-	ReactiveFragment_Render_Factory,
-	ReactiveHTMLElement_Render_Factory,
-	ReactiveSVGElement_Render_Factory
+	TsignalComponentRender,
+	TsignalFragmentRender,
+	TsignalHTMLRender,
+	TsignalSVGRender
 } from "./renderers.ts"
 export { ReactiveDynamicStylable } from "./styling.ts"
 

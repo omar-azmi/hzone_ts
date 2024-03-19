@@ -1,6 +1,6 @@
 import { isFunction } from "../deps.ts"
 import { normalizeAttrProps, stringify, stringifyAttrValue } from "../funcdefs.ts"
-import { HyperZone } from "../hyperzone.ts"
+import { HyperZone } from "../hzone/mod.ts"
 import { AttrValue, ComponentGenerator, Fragment, Props, Stylable, StyleProps, TextValue } from "../typedefs.ts"
 import { Accessor, Context, CreateEffect, DynamicStylable, EffectSignal_Factory, FragmentTagComponent, HTMLTagComponent, MaybeAccessor, TsignalStyleProps, SVGTagComponent, VanillaComponentRender } from "./deps.ts"
 import { ReactiveDynamicStylable } from "./styling.ts"

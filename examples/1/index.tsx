@@ -3,7 +3,7 @@
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { ATTRS, EVENTS, HyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaSVGElementRender } from "../../src/mod.ts"
-import { TsignalHTMLRender } from "../../src/tsignal_base/mod.ts"
+import { TsignalHTMLRender } from "../../src/tsignal/mod.ts"
 
 
 const

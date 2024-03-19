@@ -3,11 +3,11 @@
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { InlineHyperZone } from "../../src/mod.ts"
-import { TsignalComponentRender, TsignalFragmentRender, TsignalHTMLRender, TsignalSVGRender } from "../../src/tsignal_base/mod.ts"
+import { TsignalComponentRender, TsignalFragmentRender, TsignalHTMLRender, TsignalSVGRender } from "../../src/tsignal/mod.ts"
 export { throttlingEquals } from "jsr:@oazmi/tsignal"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
 export type { ComponentGenerator, FragmentComponentGenerator } from "../../src/mod.ts"
-export type { ReactiveComponentProps } from "../../src/tsignal_inline/mod.ts"
+export type { ReactiveComponentProps } from "../../src/tsignal/mod.ts"
 
 
 export const

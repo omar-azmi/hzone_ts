@@ -1,4 +1,4 @@
-import type { Context } from "./tsignal_base/deps.ts"
+import type { Context } from "./tsignal/deps.ts"
 import type { HyperRender } from "./typedefs.ts"
 
 

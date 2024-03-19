@@ -86,7 +86,7 @@ const change_time = <div style={{
 	flexWrap: "nowrap",
 	alignItems: "stretch",
 }}>
-	<span style="text-align: center;">change time</span>
+	<span attr:style="text-align: center;">change time</span>
 	{time_input_element}
 </div>
 
@@ -101,7 +101,7 @@ document.getElementById("root")!.append(
 		width: "30vw",
 	}}>
 		{change_time}
-		<Clock style="align-self: center;" {...{ getTime }} />
+		<Clock attr:style="align-self: center;" {...{ getTime }} />
 		{slow_down_time}
 	</div>,
 	<img src="../3/dio_brando.jpg"></img>,

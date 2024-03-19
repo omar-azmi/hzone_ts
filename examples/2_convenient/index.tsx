@@ -15,7 +15,7 @@ const dispose = setInterval(requestAnimationFrame, 15, () => {
 ctx.onDelete(idCurrentTime, () => clearInterval(dispose))
 
 document.getElementById("root")!.appendChild(<Clock
-	style="align-self: center;"
+	attr:style="align-self: center;"
 	getTime={getCurrentTime}
 />)
 

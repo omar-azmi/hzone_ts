@@ -2,23 +2,25 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { Component_Render, DynamicStyleSheet, Fragment_Render, HyperZone, TemplateElement_Render } from "../../src/mod.ts"
-import { ConvenientReactiveHTMLElement_Render_Factory } from "../../src/tsignal/mod.ts"
+import { DynamicStyleSheet, InlineHyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaTemplateRender } from "../../src/mod.ts"
+import { TsignalHTMLRender } from "../../src/tsignal_base/mod.ts"
 
 
 const
 	ctx = new Context(),
 	createState = ctx.addClass(StateSignal_Factory),
 	createMemo = ctx.addClass(MemoSignal_Factory),
-	ReactiveHTMLElement_Render = ConvenientReactiveHTMLElement_Render_Factory(ctx)
+	reactive_html_renderer = new TsignalHTMLRender({ ctx })
 
-const { h, Fragment, } = HyperZone.create(
-	new Fragment_Render(),
-	// `TemplateElement_Render` needs to be higher than any `HTMLElement_Render`, as `HTMLElement_Render` captures all strings.
-	new TemplateElement_Render(),
-	new ReactiveHTMLElement_Render(),
-	new Component_Render(),
-)
+const { h, Fragment, } = InlineHyperZone.create({
+	default: [
+		new VanillaFragmentRender(),
+		// `TemplateElement_Render` needs to be higher than any `HTMLElement_Render`, as `HTMLElement_Render` captures all strings.
+		new VanillaTemplateRender(),
+		reactive_html_renderer,
+		new VanillaComponentRender(),
+	]
+})
 
 // DONE: a much better way of changing single css declarations via js:
 // - https://developer.mozilla.org/en-US/docs/Web/API/CSS_Object_Model/Using_dynamic_styling_information

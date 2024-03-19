@@ -72,7 +72,7 @@ import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENT
 import { DynamicStylable } from "./styling.ts"
 
 
-export class Component_Render<G extends ComponentGenerator = ComponentGenerator> extends HyperRender<G> {
+export class VanillaComponentRender<G extends ComponentGenerator = ComponentGenerator> extends HyperRender<G> {
 	test(tag: any, props?: any): boolean { return isFunction(tag) }
 
 	h<
@@ -165,7 +165,7 @@ export class Component_Render<G extends ComponentGenerator = ComponentGenerator>
 }
 
 export const HTMLTagComponent = <TAG extends keyof HTMLElementTagNameMap = any>(props?: Props<{ tag?: TAG }>): HTMLElementTagNameMap[TAG] => document.createElement(props!.tag!)
-export class HTMLElement_Render extends Component_Render<typeof HTMLTagComponent> {
+export class VanillaHTMLRender extends VanillaComponentRender<typeof HTMLTagComponent> {
 	test(tag: any, props?: any): boolean { return typeof tag === "string" }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
@@ -180,7 +180,7 @@ export const SVGTagComponent = <TAG extends keyof SVGElementTagNameMap = any>(pr
  * > [!IMPORTANT]
  * > note that svg attributes are case sensitive, most notably the "viewBox" and "preserveAspectRatio" attributes must have the exact casing.
 */
-export class SVGElement_Render extends Component_Render<typeof SVGTagComponent> {
+export class VanillaSVGElementRender extends VanillaComponentRender<typeof SVGTagComponent> {
 	test(tag: any, props?: any): boolean { return typeof tag === "string" }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
@@ -196,7 +196,7 @@ export type TemplateProps = {
 	sheets?: CSSStyleSheet[]
 }
 
-export class TemplateElement_Render extends Component_Render<(props: Props<Partial<TemplateProps>>) => HTMLTemplateElement> {
+export class VanillaTemplateRender extends VanillaComponentRender<(props: Props<Partial<TemplateProps>>) => HTMLTemplateElement> {
 	test(tag: any, props?: any): boolean { return tag === "template" }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`
@@ -224,7 +224,7 @@ export class TemplateElement_Render extends Component_Render<(props: Props<Parti
 }
 
 export const FragmentTagComponent = (props?: any) => [] as Element[]
-export class Fragment_Render extends Component_Render {
+export class VanillaFragmentRender extends VanillaComponentRender {
 	test(tag: any, props?: any): boolean { return tag === Fragment }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: Fragment` as the first argument instead of `component: ComponentGenerator`

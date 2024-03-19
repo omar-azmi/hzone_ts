@@ -1,4 +1,4 @@
-export * from "./core/mod.ts"
+export * from "./vanilla/mod.ts"
 export { normalizeAttrProps, stringify, stringifyAttrValue } from "./funcdefs.ts"
 export { HyperZone } from "./hyperzone.ts"
 export type * from "./typedefs.ts"

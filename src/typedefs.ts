@@ -1,5 +1,7 @@
-import type { Component_Render } from "./core/mod.ts"
+import { HyperZoneConfigs } from "./configs.ts"
 import { DEBUG, HTMLEventNames, PreserveStringKeyAndValues, bindMethodToSelfByName } from "./deps.ts"
+import type { HyperZone } from "./hyperzone.ts"
+import type { VanillaComponentRender } from "./vanilla/mod.ts"
 
 /** any object or primitive that implements the `toString` method. */
 export type Stringifiable = { toString(): string }
@@ -18,7 +20,7 @@ export type AttrTruthy = "" | true
 export type AttrFalsy = null | undefined | false
 
 /** the value assignable to any attribute of an `Element`. <br>
- * this is specifically for {@link Component_Render | `Component_Render`} and its subclasses.
+ * this is specifically for {@link VanillaComponentRender | `ComponentRenderer`} and its subclasses.
 */
 export type AttrValue = Stringifiable | AttrTruthy | AttrFalsy
 
@@ -27,6 +29,10 @@ export type TextValue = Stringifiable | null | undefined
 
 /** this is the base model for this library which must be extended by all JSX renders. */
 export abstract class HyperRender<TAG = any, OUTPUT = any> {
+	constructor(hyperzone_renderer?: HyperZone)
+	constructor(config?: HyperZoneConfigs[keyof HyperZoneConfigs])
+	constructor(config?: any) { }
+
 	/** tests if the provided parameters, {@link tag | `tag`} and {@link props | `props`}, are compatible this `Zone`'s {@link h | `h` method} */
 	abstract test(tag: any, props?: any): boolean
 
@@ -174,7 +180,7 @@ export const EXECUTE = Symbol(DEBUG.MINIFY || "explicitly declared list of funct
 */
 export type ExecuteProps<E = Element> = Array<(element: E) => void>
 
-/** the default props assignable to all components (any renderer that inherits from {@link Component_Render | `Component_Render`} will support these). <br>
+/** the default props assignable to all components (any renderer that inherits from {@link VanillaComponentRender | `ComponentRenderer`} will support these). <br>
  * see the details of each on their respective documentation:
  * - for element attributes, see: {@link AttrProps | `AttrProps`}
  * - for element events, see: {@link EventProps | `EventProps`}

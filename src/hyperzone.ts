@@ -1,3 +1,4 @@
+import type { HyperZoneConfigs, hzone_Config } from "./configs.ts"
 import { DEBUG, console_error } from "./deps.ts"
 import { Fragment, HyperRender } from "./typedefs.ts"
 
@@ -10,12 +11,18 @@ const
 	PopZone = Symbol(DEBUG.MINIFY || "popped a zone"),
 	node_only_child_filter = (child: symbol | Node) => (typeof child !== "symbol")
 
+
 export class HyperZone extends HyperRender<any, any> {
 	protected zones: Array<HyperRender[]> = []
+	public configs: HyperZoneConfigs = {}
 
-	constructor(...default_zone: HyperRender[]) {
+	constructor(config?: hzone_Config) {
 		super()
-		this.pushZone(...default_zone)
+		this.setDefaultZone(...(config?.default ?? []))
+	}
+
+	setDefaultZone(...default_zone: HyperRender[]) {
+		this.zones[0] = default_zone
 	}
 
 	pushZone(...renderers: HyperRender[]): typeof PushZone {
@@ -55,16 +62,18 @@ export class HyperZone extends HyperRender<any, any> {
 		console_error(DEBUG.ERROR && "failed to capture an appropriate renderer for tag:", tag)
 	}
 
-	static create(...default_zone: HyperRender[]): ({
-		h: HyperZone["h"]
-		Fragment: typeof Fragment
-		pushZone: HyperZone["pushZone"]
-		popZone: HyperZone["popZone"]
+	static create(config?: hzone_Config): ({
+		h: HyperZone["h"],
+		Fragment: typeof Fragment,
+		setDefaultZone: HyperZone["setDefaultZone"],
+		pushZone: HyperZone["pushZone"],
+		popZone: HyperZone["popZone"],
 	}) {
-		const new_hyperzone = new this(...default_zone)
+		const new_hyperzone = new this(config)
 		return {
 			h: new_hyperzone.bindMethod("h"),
 			Fragment,
+			setDefaultZone: new_hyperzone.bindMethod("setDefaultZone"),
 			pushZone: new_hyperzone.bindMethod("pushZone"),
 			popZone: new_hyperzone.bindMethod("popZone"),
 		}

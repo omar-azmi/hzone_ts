@@ -1,6 +1,6 @@
 import { HyperZoneConfigs } from "./configs.ts"
 import { DEBUG, HTMLEventNames, PreserveStringKeyAndValues, bindMethodToSelfByName } from "./deps.ts"
-import type { HyperZone } from "./hyperzone.ts"
+import type { HyperZone } from "./hzone/mod.ts"
 import type { VanillaComponentRender } from "./vanilla/mod.ts"
 
 /** any object or primitive that implements the `toString` method. */

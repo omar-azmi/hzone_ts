@@ -4,7 +4,7 @@ export { inlinePropsRemapper } from "./inline_convenience.ts"
 export type { InlineAttrName, InlineEventName, InlineExecuteFn, InlineExecuteName, InlineMemberName } from "./inline_convenience.ts"
 export type { SVGTagNameAttributesMap } from "./svg_attributes_map.ts"
 import type { HTMLTagNames, SVGTagNames } from "../deps.ts"
-import type { IntrinsicElements } from "../tsignal/mod.ts"
+import type { IntrinsicElements } from "../tsignal_inline/mod.ts"
 import type { HTMLTagNameAttributesMap } from "./html_attributes_map.ts"
 import type { SVGTagNameAttributesMap } from "./svg_attributes_map.ts"
 

@@ -1,6 +1,7 @@
-import type { HyperZoneConfigs, hzone_Config } from "./configs.ts"
-import { DEBUG, console_error } from "./deps.ts"
-import { Fragment, HyperRender } from "./typedefs.ts"
+import type { HyperZoneConfigs, hzone_Config } from "../configs.ts"
+import { DEBUG, console_error } from "../deps.ts"
+import { inlinePropsRemapper } from "../dom_core/inline_convenience.ts"
+import { Fragment, HyperRender } from "../typedefs.ts"
 
 
 type HyperZoneChild = typeof PushZone | typeof PopZone | Node
@@ -77,5 +78,13 @@ export class HyperZone extends HyperRender<any, any> {
 			pushZone: new_hyperzone.bindMethod("pushZone"),
 			popZone: new_hyperzone.bindMethod("popZone"),
 		}
+	}
+}
+
+export class InlineHyperZone extends HyperZone {
+	h(tag: typeof Fragment, props: null, ...children: HyperZoneChildren): Element[]
+	h(tag: any, props: any, ...children: HyperZoneChildren): Element
+	h(tag: any, props: any, ...children: HyperZoneChildren): Element | Element[] | undefined {
+		return super.h(tag, inlinePropsRemapper(props), ...children)
 	}
 }

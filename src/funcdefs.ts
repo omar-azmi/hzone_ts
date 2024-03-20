@@ -1,4 +1,5 @@
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, EVENTS, MEMBERS, Props, EXECUTE, Stringifiable, STYLE } from "./typedefs.ts"
+import { Props } from "./props.ts"
+import { AttrValue, Stringifiable } from "./typedefs.ts"
 
 
 export const
@@ -23,46 +24,7 @@ export const
 			: stringify(value)
 	}
 
-/** place top level props into the {@link ATTRS | `props[ATTRS]`} field. this is useful for HTMLElement and SVGElement component generators. <br>
- * 
- * @example
- * ```ts
- * const normalized_props = normalizeAttrProps({
- * 	width: 50,
- * 	height: 30,
- * 	[ATTRS]: {
- * 		height: 40,
- * 		style: "background-color: red;",
- * 	},
- * 	[EVENTS]: { click: () => { console.log("you suck") } }
- * })
- * // this will now produce: the following equivalent structure:
- * normalized_props === {
- * 	[ATTRS]: {
- * 		width: 50,
- * 		height: 40, // notice that the thing in `[ATTRS]` has a higher precedence.
- * 		style: "background-color: red;",
- * 	},
- * 	[EVENTS]: { click: () => { console.log("you suck") } }
- * }
- * ```
-*/
-export const normalizeAttrProps = (props?: null | Props<AttrProps>): Props<{}> => {
-	const {
-		[EVENTS]: event_props,
-		[ADVANCED_EVENTS]: advanced_events_props,
-		[MEMBERS]: member_props,
-		[STYLE]: style_props,
-		[EXECUTE]: execute_props,
-		[ATTRS]: other_attr_props,
-		...attr_props
-	} = props ?? {}
-	return {
-		[EVENTS]: event_props,
-		[ADVANCED_EVENTS]: advanced_events_props,
-		[MEMBERS]: member_props,
-		[STYLE]: style_props,
-		[EXECUTE]: execute_props,
-		[ATTRS]: { ...attr_props, ...other_attr_props },
-	}
-}
+export const
+	HTMLTagComponent = <TAG extends keyof HTMLElementTagNameMap = any>(props?: Props<{ tag?: TAG }>): HTMLElementTagNameMap[TAG] => document.createElement(props!.tag!),
+	SVGTagComponent = <TAG extends keyof SVGElementTagNameMap = any>(props?: Props<{ tag?: TAG }>): SVGElementTagNameMap[TAG] => document.createElementNS("http://www.w3.org/2000/svg", props!.tag!),
+	FragmentTagComponent = (props?: any) => [] as Element[]

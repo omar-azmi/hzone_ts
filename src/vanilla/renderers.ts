@@ -67,8 +67,9 @@
 */
 
 import { array_isArray, dom_customElements, isFunction, object_entries } from "../deps.ts"
-import { is_nullable, normalizeAttrProps, stringifyAttrValue } from "../funcdefs.ts"
-import { ADVANCED_EVENTS, ATTRS, AttrProps, AttrValue, ComponentGenerator, EVENTS, EXECUTE, EventFn, Fragment, HyperRender, MEMBERS, Props, STYLE, Stylable, StyleProps } from "../typedefs.ts"
+import { FragmentTagComponent, HTMLTagComponent, SVGTagComponent, is_nullable, stringifyAttrValue } from "../funcdefs.ts"
+import { ATTRS, AttrProps, EVENTS, EventFn, EventProps, MEMBERS, MemberProps, ONCLEAN, ONINIT, Props, STYLE, StyleProps, normalizeAttrProps } from "../props.ts"
+import { AttrValue, ComponentGenerator, Fragment, HyperRender, Stylable } from "../typedefs.ts"
 import { DynamicStylable } from "./styling.ts"
 
 
@@ -79,32 +80,35 @@ export class VanillaComponentRender<G extends ComponentGenerator = ComponentGene
 		C extends G,
 		P extends (C extends ComponentGenerator<infer PROPS> ? PROPS : undefined | null | object) = any
 	>(component: C, props: Props<P>, ...children: (string | Node)[]): ReturnType<C> {
-		props ??= {} as Props<P>
+		const {
+			[ATTRS]: attr_props = {},
+			[EVENTS]: event_props = {},
+			[MEMBERS]: member_props = {},
+			[STYLE]: style,
+			[ONINIT]: oninit_fn,
+			[ONCLEAN]: onclean_fn,
+			...rest_props
+		} = props ?? {} as Props<P>
 		children = children.map((child) => this.processChild(child))
-		const component_node = component(props) as ReturnType<C>
+		const component_node = component(rest_props) as ReturnType<C>
 		if (array_isArray(component_node)) {
 			component_node.push(...children as (string | Element)[])
 			return component_node
 		}
-		for (const [attr_name, attr_value] of object_entries(props[ATTRS] ?? {})) {
+		for (const [attr_name, attr_value] of object_entries(attr_props as AttrProps)) {
 			this.addAttr(component_node, attr_name, attr_value)
 		}
-		for (const [event_name, event_fn] of object_entries(props[EVENTS] ?? {})) {
-			this.addEvent(component_node, event_name, event_fn)
+		for (const [event_name, event_fn_or_tuple] of object_entries(event_props as EventProps)) {
+			const [event_fn, event_options] = array_isArray(event_fn_or_tuple) ? event_fn_or_tuple : [event_fn_or_tuple]
+			this.addEvent(component_node, event_name, event_fn, event_options)
 		}
-		for (const [event_name, [event_fn, options]] of object_entries(props[ADVANCED_EVENTS] ?? {})) {
-			this.addEvent(component_node, event_name, event_fn, options)
-		}
-		for (const [member_key, member_value] of object_entries(props[MEMBERS] ?? {})) {
+		for (const [member_key, member_value] of object_entries(member_props as MemberProps)) {
 			this.setMember(component_node, member_key as any, member_value as any)
 		}
-		const style = props[STYLE]
-		if (style) {
-			this.setStyle(component_node as unknown as Stylable, style)
-		}
-		for (const fn of (props[EXECUTE] ?? [])) {
-			this.executeFn(component_node, fn)
-		}
+		if (style) { this.setStyle(component_node as unknown as Stylable, style) }
+		if (oninit_fn) { this.runOnInit(component_node, oninit_fn) }
+		// TODO: implement the cleanup mechanism and how this will get signaled that the element has been permanently detached
+		// if (onclean_fn) { this.runOnClean(component_node, oninit_fn) }
 		component_node.append(...children)
 		return component_node
 	}
@@ -153,8 +157,13 @@ export class VanillaComponentRender<G extends ComponentGenerator = ComponentGene
 		return dynamic_stylable
 	}
 
-	protected executeFn<E = Element>(element: E, fn: (element: E) => void) {
-		fn(element)
+	protected runOnInit<E = Element>(element: E, init_fn: (element: E) => void) {
+		init_fn(element)
+	}
+
+	protected runOnClean<E = Element>(element: E, clean_fn: (element: E) => void) {
+		// TODO: think thoroughly how cleaning up should be implemented, and how this will get signaled when the `element` is detached permanently.
+		clean_fn(element)
 	}
 
 	protected processChild(child: string | Node): string | Node {
@@ -164,7 +173,6 @@ export class VanillaComponentRender<G extends ComponentGenerator = ComponentGene
 	// TODO: add an `onDispose` or `onDelete` overridable method. and maybe also add `onInit` overridable method.
 }
 
-export const HTMLTagComponent = <TAG extends keyof HTMLElementTagNameMap = any>(props?: Props<{ tag?: TAG }>): HTMLElementTagNameMap[TAG] => document.createElement(props!.tag!)
 export class VanillaHTMLRender extends VanillaComponentRender<typeof HTMLTagComponent> {
 	test(tag: any, props?: any): boolean { return typeof tag === "string" }
 
@@ -173,8 +181,6 @@ export class VanillaHTMLRender extends VanillaComponentRender<typeof HTMLTagComp
 		return super.h(HTMLTagComponent, { tag, ...normalizeAttrProps(props) }, ...children) as HTMLElementTagNameMap[TAG]
 	}
 }
-
-export const SVGTagComponent = <TAG extends keyof SVGElementTagNameMap = any>(props?: Props<{ tag?: TAG }>): SVGElementTagNameMap[TAG] => document.createElementNS("http://www.w3.org/2000/svg", props!.tag!)
 
 /**
  * > [!IMPORTANT]
@@ -223,7 +229,6 @@ export class VanillaTemplateRender extends VanillaComponentRender<(props: Props<
 	}
 }
 
-export const FragmentTagComponent = (props?: any) => [] as Element[]
 export class VanillaFragmentRender extends VanillaComponentRender {
 	test(tag: any, props?: any): boolean { return tag === Fragment }
 

@@ -1,6 +1,6 @@
 import type { HyperZoneConfigs, hzone_Config } from "../configs.ts"
 import { DEBUG, console_error } from "../deps.ts"
-import { inlinePropsRemapper } from "../dom_core/inline_convenience.ts"
+import { inlinePropsRemapper } from "../props.ts"
 import { Fragment, HyperRender } from "../typedefs.ts"
 
 

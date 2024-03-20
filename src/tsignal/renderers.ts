@@ -1,8 +1,10 @@
+import type { tsignal_Config } from "../configs.ts"
 import { isFunction } from "../deps.ts"
-import { normalizeAttrProps, stringify, stringifyAttrValue } from "../funcdefs.ts"
+import { FragmentTagComponent, HTMLTagComponent, SVGTagComponent, stringify, stringifyAttrValue } from "../funcdefs.ts"
 import { HyperZone } from "../hzone/mod.ts"
-import { AttrValue, ComponentGenerator, Fragment, Props, Stylable, StyleProps, TextValue } from "../typedefs.ts"
-import { Accessor, Context, CreateEffect, DynamicStylable, EffectSignal_Factory, FragmentTagComponent, HTMLTagComponent, MaybeAccessor, TsignalStyleProps, SVGTagComponent, VanillaComponentRender } from "./deps.ts"
+import { Props, StyleProps, normalizeAttrProps } from "../props.ts"
+import { AttrValue, ComponentGenerator, Fragment, Stylable, TextValue } from "../typedefs.ts"
+import { Accessor, Context, CreateEffect, DynamicStylable, EffectSignal_Factory, MaybeAccessor, TsignalStyleProps, VanillaComponentRender } from "./deps.ts"
 import { ReactiveDynamicStylable } from "./styling.ts"
 
 
@@ -11,18 +13,13 @@ const
 	isAccessor_TextValue = isFunction as ((obj: any) => obj is Accessor<TextValue>),
 	isAccessor_MemberValue = isFunction as ((obj: any) => obj is Accessor<any>)
 
-
-export interface ComponentRenderConfig {
-	ctx?: Context
-}
-
 export class TsignalComponentRender<G extends ComponentGenerator = ComponentGenerator> extends VanillaComponentRender<G> {
 	public ctx: Context
 	protected createEffect: CreateEffect
 
 	constructor(hyperzone_renderer?: HyperZone)
-	constructor(config?: ComponentRenderConfig)
-	constructor(config?: HyperZone | ComponentRenderConfig) {
+	constructor(config?: tsignal_Config)
+	constructor(config?: HyperZone | tsignal_Config) {
 		super()
 		const
 			config_is_hyperzone = config instanceof HyperZone,

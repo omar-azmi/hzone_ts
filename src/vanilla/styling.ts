@@ -1,5 +1,6 @@
 import { ConstructorOf, object_assign, object_entries, object_fromEntries } from "../deps.ts"
-import { Stylable, StyleProps } from "../typedefs.ts"
+import { StyleProps } from "../props.ts"
+import { Stylable } from "../typedefs.ts"
 
 
 export class DynamicStylable {

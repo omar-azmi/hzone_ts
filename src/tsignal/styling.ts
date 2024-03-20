@@ -1,5 +1,6 @@
 import { isFunction, object_entries, object_fromEntries } from "../deps.ts"
-import { Stylable, StyleProps } from "../typedefs.ts"
+import { StyleProps } from "../props.ts"
+import { Stylable } from "../typedefs.ts"
 import { CreateEffect, DynamicStylable, TsignalStyleProps } from "./deps.ts"
 
 

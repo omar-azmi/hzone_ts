@@ -2,23 +2,13 @@ import { HTMLElementUniqueMemberKeys, HTMLEventNames, HTMLTagNames, SVGTagNames 
 import { IntrinsicHTMLElements_Factory, IntrinsicSVGElements_Factory } from "../dom_typedefs/mod.ts"
 import { ATTRS, AdvancedEventFn, DefaultProps, EVENTS, EventFn, EventProps, ExecuteProp, InlineAttrName, InlineEventName, InlineMemberName, MEMBERS, MemberProps, ONCLEAN, ONINIT, STYLE, StyleProps } from "../props.ts"
 import { Stringifiable } from "../typedefs.ts"
-import type { Accessor, DynamicStylable, MaybeAccessor, TsignalStyleProps } from "./deps.ts"
-import type { ReactiveDynamicStylable } from "./styling.ts"
 
 
-export interface SymbolDefaultProps<ELEM extends Element = Element> extends Omit<DefaultProps, typeof STYLE> {
-	[ATTRS]?: { [attribute_name: string]: MaybeAccessor<Stringifiable> }
+export interface SymbolDefaultProps<ELEM extends Element = Element> extends DefaultProps {
+	[ATTRS]?: { [attribute_name: string]: Stringifiable }
 	[EVENTS]?: EventProps<ELEM>
-	[MEMBERS]?: MaybeAccessor<MemberProps<ELEM>>
-	/** TODO: no longer fully true. `MaybeAccessor<string>` is not accepted by `[STYLE]`. it only accepts objects now.
-	 * note that using `MaybeAccessor<string>` (aka `string | Accessor<string>`), will be re-routed to the element's `"style"` attribute,
-	 * and it won't be used for assigning onto the element's `"style"` member.
-	 * in other words, depending on what you choose, one of the following will occur:
-	 * - `MaybeAccessor<string>` will ultimately lead to `element.setAttribute("style", the_whole_reactive_style)`, during the assignment stage.
-	 * - `Accessor<StyleProps>` will create an underlying {@link DynamicStylable | `DynamicStylable`}, which will ultimately result in `Object.assign(element.style, the_whole_reactive_style)`, during the assignment stage.
-	 * - `ReactiveStyleProps` will create an underlying {@link ReactiveDynamicStylable | `ReactiveDynamicStylable`}, which will only update the modified property via `element.style.setProperty(the_reactive_style.["changedMember"])`.
-	*/
-	[STYLE]?: TsignalStyleProps | Accessor<StyleProps>
+	[MEMBERS]?: MemberProps<ELEM>
+	[STYLE]?: StyleProps
 	[ONINIT]?: ExecuteProp<ELEM>
 	[ONCLEAN]?: ExecuteProp<ELEM>
 }
@@ -26,31 +16,31 @@ export type SymbolComponentProps<P, ELEM extends HTMLElement = HTMLElement> = P 
 
 export type SymbolIntrinsicHTMLElements = IntrinsicHTMLElements_Factory<{
 	[TagName in HTMLTagNames]: SymbolDefaultProps<HTMLElementTagNameMap[TagName]>
-}, MaybeAccessor<Stringifiable>>
+}, Stringifiable>
 export type SymbolIntrinsicSVGElements = IntrinsicSVGElements_Factory<{
 	[TagName in SVGTagNames]: SymbolDefaultProps<SVGElementTagNameMap[TagName]>
-}, MaybeAccessor<Stringifiable>>
+}, Stringifiable>
 
 /** to get JSX symbol-based highlighting, assuming your source code directory is `/src/`, create the file `/src/jsx.d.ts`, then fill it with the following:
  * 
  * ```ts
  * // path: `/src/jsx.d.ts`
- * export { SymbolIntrinsicElements as IntrinsicElements } from "./path/to/hzone/tsignal/jsx.ts"
+ * export { SymbolIntrinsicElements as IntrinsicElements } from "./path/to/hzone/vanilla/jsx.ts"
  * export as namespace JSX
  * ```
 */
 export type SymbolIntrinsicElements = SymbolIntrinsicHTMLElements & SymbolIntrinsicSVGElements
 
 
-export type InlineAttrProps = Record<InlineAttrName<string>, MaybeAccessor<Stringifiable>>
+export type InlineAttrProps = Record<InlineAttrName<string>, Stringifiable>
 export type InlineEventProps<ELEM extends Element> = {
 	[EventName in HTMLEventNames as InlineEventName<EventName>]?: EventFn<EventName, ELEM> | AdvancedEventFn<EventName, ELEM>
 }
 export type InlineMemberProps<ELEM extends Element> = {
-	[MemberName in HTMLElementUniqueMemberKeys<ELEM> as InlineMemberName<MemberName>]?: MaybeAccessor<ELEM[MemberName]>
+	[MemberName in HTMLElementUniqueMemberKeys<ELEM> as InlineMemberName<MemberName>]?: ELEM[MemberName]
 }
 export type InlineStyleProps = {
-	style?: TsignalStyleProps | Accessor<StyleProps>
+	style?: StyleProps
 }
 export type InlineInitAndCleanProps<ELEM extends Element> = {
 	init?: ExecuteProp<ELEM>
@@ -66,17 +56,47 @@ export type InlineComponentProps<P, ELEM extends HTMLElement = HTMLElement> = P 
 
 export type InlineIntrinsicHTMLElements = IntrinsicHTMLElements_Factory<{
 	[TagName in HTMLTagNames]: InlineDefaultProps<HTMLElementTagNameMap[TagName]>
-}, MaybeAccessor<Stringifiable>>
+}, Stringifiable>
 export type InlineIntrinsicSVGElements = IntrinsicSVGElements_Factory<{
 	[TagName in SVGTagNames]: InlineDefaultProps<SVGElementTagNameMap[TagName]>
-}, MaybeAccessor<Stringifiable>>
+}, Stringifiable>
 
 /** to get inline-based JSX highlighting, assuming your source code directory is `/src/`, create the file `/src/jsx.d.ts`, then fill it with the following:
  * 
  * ```ts
  * // path: `/src/jsx.d.ts`
- * export { InlineIntrinsicElements as IntrinsicElements } from "./path/to/hzone/tsignal/jsx.ts"
+ * export { InlineIntrinsicElements as IntrinsicElements } from "./path/to/hzone/vanilla/jsx.ts"
  * export as namespace JSX
  * ```
 */
 export type InlineIntrinsicElements = InlineIntrinsicHTMLElements & InlineIntrinsicSVGElements
+
+
+
+// attribute comparison:
+// TODO: make it part of this module's documentation comment, in order to show how two similar props can be represented under the two variants of the props systems.
+/*
+const my_inline_props: InlineComponentProps<{}, HTMLButtonElement> = {
+	"attr:data-aria-kill-yourself": "4ryyl",
+	"on:mouseleave": (evt) => { },
+	"on:click": [(evt) => { }, { once: true }],
+	"set:disabled": false,
+	style: {
+		"--my-theme": "black",
+		backgroundColor: "var(--my-theme)",
+	},
+}
+
+const my_symbol_props: SymbolComponentProps<{}, HTMLButtonElement> = {
+	[ATTRS]: { "data-aria-kill-yourself": "4ryyl" },
+	[EVENTS]: {
+		mouseleave(evt) { },
+		click: [(evt) => { }, { once: true }]
+	},
+	[MEMBERS]: { disabled: true },
+	[STYLE]: {
+		"--my-theme": "black",
+		backgroundColor: "var(--my-theme)",
+	},
+}
+*/

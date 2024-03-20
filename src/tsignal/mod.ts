@@ -1,6 +1,6 @@
-import { ComponentProps } from "./jsx.ts"
+import { SymbolComponentProps } from "./jsx.ts"
 export type { Accessor, MaybeAccessor, TsignalStyleProps } from "./deps.ts"
-export type { IntrinsicElements } from "./jsx.ts"
+export type { InlineIntrinsicElements, SymbolIntrinsicElements } from "./jsx.ts"
 export {
 	TsignalComponentRender,
 	TsignalFragmentRender,
@@ -8,5 +8,5 @@ export {
 	TsignalSVGRender
 } from "./renderers.ts"
 export { ReactiveDynamicStylable } from "./styling.ts"
-export type ReactiveComponentProps<P, E extends HTMLElement = HTMLElement> = ComponentProps<P, E>
+export type TsignalComponentProps<P, ELEM extends HTMLElement = HTMLElement> = SymbolComponentProps<P, ELEM>
 

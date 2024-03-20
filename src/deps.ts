@@ -54,4 +54,4 @@ I think this feature should be implemented inside of the `processChild` method.
 //       so the standard html component generator/renderer is not suitable for it.
 // DONE: purge the use of symbols to change scopes, and instead plug in the instances of the render classes directly into the zone.
 // TODO: implement classList convenience property key for reactive classes
-// TODO: purge `[ADVANCED_EVENTS]` and replace it with `[EVENTS]`, and make the base component class take care of inferring which kind it is.
+// DONE: purge `[ADVANCED_EVENTS]` and replace it with `[EVENTS]`, and make the base component class take care of inferring which kind it is.

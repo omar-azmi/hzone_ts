@@ -1,7 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { Accessor, ComponentGenerator, Fragment, ReactiveComponentProps, component_renderer, createMemo, fragment_renderer, h, popZone, pushZone, svg_renderer } from "./deps.ts"
+import { Accessor, ComponentGenerator, Fragment, TsignalInlineComponentProps, component_renderer, createMemo, fragment_renderer, h, popZone, pushZone, svg_renderer } from "./deps.ts"
 import { Hand } from "./hands.tsx"
 import { Lines } from "./lines.tsx"
 
@@ -11,7 +11,7 @@ type ClockFaceProps = {
 	second: Accessor<string>
 	subsecond: Accessor<string>
 }
-export const ClockFace: ComponentGenerator<ReactiveComponentProps<ClockFaceProps>> = (props: ClockFaceProps) => {
+export const ClockFace: ComponentGenerator<TsignalInlineComponentProps<ClockFaceProps>> = (props: ClockFaceProps) => {
 	pushZone(svg_renderer, component_renderer, fragment_renderer)
 	const element = <svg viewBox="0 0 200 200" width="30vmin">
 		<g transform="translate(100, 100)">
@@ -33,7 +33,7 @@ export const ClockFace: ComponentGenerator<ReactiveComponentProps<ClockFaceProps
 // TODO-TSIGNAL_TS: I just realized that it may be a good idea to allow `ctx.onDelete` to contain an array of disposal functions,
 // instead of just one, since there could be multiple places that may need clearing up.
 type Clock_Props = { getTime: Accessor<number> }
-export const Clock: ComponentGenerator<ReactiveComponentProps<Clock_Props>> = ({ getTime }: { getTime: Accessor<number> }) => {
+export const Clock: ComponentGenerator<TsignalInlineComponentProps<Clock_Props>> = ({ getTime }: { getTime: Accessor<number> }) => {
 	const rotate = (rotate: number, deg_steps = 360 / 60) => `rotate(${((rotate * 360) / deg_steps | 0) * deg_steps})`
 
 	const [, getSubsecond] = createMemo((id) => rotate(getTime(id) % 1, 0.1), { defer: false })

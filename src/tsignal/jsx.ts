@@ -3,7 +3,7 @@ import { IntrinsicHTMLElements_Factory, IntrinsicSVGElements_Factory } from "../
 import { ATTRS, AdvancedEventFn, DefaultProps, EVENTS, EventFn, EventProps, ExecuteProp, InlineAttrName, InlineEventName, InlineMemberName, MEMBERS, MemberProps, ONCLEAN, ONINIT, STYLE, StyleProps } from "../props.ts"
 import { Stringifiable } from "../typedefs.ts"
 import type { Accessor, DynamicStylable, MaybeAccessor, TsignalStyleProps } from "./deps.ts"
-import type { ReactiveDynamicStylable } from "./styling.ts"
+import type { TsignalDynamicStylable } from "./styling.ts"
 
 
 export interface SymbolDefaultProps<ELEM extends Element = Element> extends Omit<DefaultProps, typeof STYLE> {
@@ -16,7 +16,7 @@ export interface SymbolDefaultProps<ELEM extends Element = Element> extends Omit
 	 * in other words, depending on what you choose, one of the following will occur:
 	 * - `MaybeAccessor<string>` will ultimately lead to `element.setAttribute("style", the_whole_reactive_style)`, during the assignment stage.
 	 * - `Accessor<StyleProps>` will create an underlying {@link DynamicStylable | `DynamicStylable`}, which will ultimately result in `Object.assign(element.style, the_whole_reactive_style)`, during the assignment stage.
-	 * - `ReactiveStyleProps` will create an underlying {@link ReactiveDynamicStylable | `ReactiveDynamicStylable`}, which will only update the modified property via `element.style.setProperty(the_reactive_style.["changedMember"])`.
+	 * - `ReactiveStyleProps` will create an underlying {@link TsignalDynamicStylable | `TsignalDynamicStylable`}, which will only update the modified property via `element.style.setProperty(the_reactive_style.["changedMember"])`.
 	*/
 	[STYLE]?: TsignalStyleProps | Accessor<StyleProps>
 	[ONINIT]?: ExecuteProp<ELEM>

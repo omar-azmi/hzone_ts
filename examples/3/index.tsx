@@ -1,7 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { ATTRS, AttrProps, DynamicStylable, EVENTS, EXECUTE, EventProps, MEMBERS, MemberProps } from "../../src/mod.ts"
+import { ATTRS, AttrProps, DynamicStylable, EVENTS, EventProps, MEMBERS, MemberProps, ONINIT } from "../../src/mod.ts"
 import { MaybeAccessor } from "../../src/tsignal/mod.ts"
 import { Clock } from "../2/clock.tsx"
 import { Fragment, createMemo, createState, ctx, h, object_to_css_inline_style, throttlingEquals } from "../2/deps.ts"
@@ -34,7 +34,7 @@ ctx.onDelete(idCurrentTime, () => clearInterval(dispose))
 
 let prev_timeout: undefined | number = undefined
 const slow_down_time = <div {...{
-	[EXECUTE]: [(element: HTMLDivElement) => {
+	[ONINIT]: (element: HTMLDivElement) => {
 		const dynamic_style = new DynamicStylable(element)
 		dynamic_style.setStyle({
 			display: "flex",
@@ -42,7 +42,7 @@ const slow_down_time = <div {...{
 			flexWrap: "nowrap",
 			alignItems: "stretch",
 		})
-	}],
+	},
 }}>
 	<button {...{
 		[EVENTS]: {

@@ -1,7 +1,7 @@
 /** @jsx h */
 /** @jsxFrag Fragment */
 
-import { Accessor, ComponentGenerator, Fragment, ReactiveComponentProps, h } from "./deps.ts"
+import { Accessor, ComponentGenerator, Fragment, TsignalInlineComponentProps, h } from "./deps.ts"
 
 
 type HandProps = {
@@ -11,7 +11,7 @@ type HandProps = {
 	fixed?: boolean
 }
 
-export const Hand: ComponentGenerator<ReactiveComponentProps<HandProps>> = (props: HandProps) => {
+export const Hand: ComponentGenerator<TsignalInlineComponentProps<HandProps>> = (props: HandProps) => {
 	const { rotate, length, width, fixed } = props
 	return <line
 		y1={fixed ? length - 95 : 0}

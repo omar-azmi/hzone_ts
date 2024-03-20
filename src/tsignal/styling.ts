@@ -4,7 +4,7 @@ import { Stylable } from "../typedefs.ts"
 import { CreateEffect, DynamicStylable, TsignalStyleProps } from "./deps.ts"
 
 
-export class ReactiveDynamicStylable extends DynamicStylable {
+export class TsignalDynamicStylable extends DynamicStylable {
 	private createEffect: CreateEffect
 
 	constructor(createEffect: CreateEffect, stylable_object: Stylable) {
@@ -32,4 +32,4 @@ export class ReactiveDynamicStylable extends DynamicStylable {
 
 // type Selector = string
 // TODO
-// export class ReactiveDynamicStyleSheet extends DynamicStyleSheet<any> { }
+// export class TsignalDynamicStyleSheet extends DynamicStyleSheet<any> { }

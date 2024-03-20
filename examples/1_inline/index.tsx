@@ -3,8 +3,7 @@
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
 import { InlineHyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaSVGElementRender } from "../../src/mod.ts"
-import { TsignalHTMLRender } from "../../src/tsignal/mod.ts"
-import { ReactiveComponentProps } from "../../src/tsignal/mod.ts"
+import { TsignalInlineComponentProps, TsignalHTMLRender } from "../../src/tsignal/mod.ts"
 
 
 const
@@ -28,7 +27,7 @@ const {
 
 const svg_renderer = new VanillaSVGElementRender()
 
-type MyDivProps = ReactiveComponentProps<{ width?: number, height?: number }>
+type MyDivProps = TsignalInlineComponentProps<{ width?: number, height?: number }>
 const MyDiv = ({ width = 100, height = 50 }: MyDivProps = {}) => {
 	const [, getTime, setTime] = createState(Date.now() / 1000)
 	setInterval(() => {

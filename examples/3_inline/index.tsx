@@ -2,8 +2,8 @@
 /** @jsxFrag Fragment */
 
 import { DynamicStylable } from "../../src/mod.ts"
-import { Clock } from "../2_convenient/clock.tsx"
-import { Fragment, createMemo, createState, ctx, h, throttlingEquals } from "../2_convenient/deps.ts"
+import { Clock } from "../2_inline/clock.tsx"
+import { Fragment, createMemo, createState, ctx, h, throttlingEquals } from "../2_inline/deps.ts"
 
 
 let seconds_since_epoch_and_midnight = new Date().setHours(0, 0, 0, 0) / 1000
@@ -32,7 +32,7 @@ const dispose = setInterval(requestAnimationFrame, 15, () => {
 ctx.onDelete(idCurrentTime, () => clearInterval(dispose))
 
 let prev_timeout: undefined | number = undefined
-const slow_down_time = <div exec:$1={(element) => {
+const slow_down_time = <div init={(element) => {
 	const dynamic_style = new DynamicStylable(element)
 	dynamic_style.setStyle({
 		display: "flex",

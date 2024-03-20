@@ -7,7 +7,7 @@ import { TsignalComponentRender, TsignalFragmentRender, TsignalHTMLRender, Tsign
 export { throttlingEquals } from "jsr:@oazmi/tsignal"
 export type { Accessor, Setter } from "jsr:@oazmi/tsignal"
 export type { ComponentGenerator, FragmentComponentGenerator } from "../../src/mod.ts"
-export type { ReactiveComponentProps } from "../../src/tsignal/mod.ts"
+export type { TsignalInlineComponentProps } from "../../src/tsignal/mod.ts"
 
 
 export const

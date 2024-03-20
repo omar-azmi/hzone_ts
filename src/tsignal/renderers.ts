@@ -5,7 +5,7 @@ import { HyperZone } from "../hzone/mod.ts"
 import { Props, StyleProps, normalizeAttrProps } from "../props.ts"
 import { AttrValue, ComponentGenerator, Fragment, Stylable, TextValue } from "../typedefs.ts"
 import { Accessor, Context, CreateEffect, DynamicStylable, EffectSignal_Factory, MaybeAccessor, TsignalStyleProps, VanillaComponentRender } from "./deps.ts"
-import { ReactiveDynamicStylable } from "./styling.ts"
+import { TsignalDynamicStylable } from "./styling.ts"
 
 
 const
@@ -96,11 +96,11 @@ export class TsignalComponentRender<G extends ComponentGenerator = ComponentGene
 			style_is_accessor = isFunction(style),
 			dynamic_stylable = style_is_accessor
 				? new DynamicStylable(element)
-				: new ReactiveDynamicStylable(this.createEffect, element)
+				: new TsignalDynamicStylable(this.createEffect, element)
 		if (style_is_accessor) {
 			this.createEffect((id) => { dynamic_stylable.setStyle(style(id)) }, { defer: false })
 		} else {
-			(dynamic_stylable as ReactiveDynamicStylable).setStyle(style as TsignalStyleProps)
+			(dynamic_stylable as TsignalDynamicStylable).setStyle(style as TsignalStyleProps)
 		}
 		return dynamic_stylable
 	}

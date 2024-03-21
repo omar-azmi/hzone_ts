@@ -1,6 +1,6 @@
 {
 	"name": "hzone",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "a hyperscript for generating reactive components at runtime",
 	"author": "Omar Azmi",
 	"license": "Lulz plz don't steal yet",
@@ -13,9 +13,12 @@
 	},
 	"exports": {
 		".": "./src/mod.ts",
-		"./core": "./src/core/mod.ts",
+		"./hzone": "./src/hzone/mod.ts",
 		"./tsignal": "./src/tsignal/mod.ts",
+		"./vanilla": "./src/vanilla/mod.ts",
+		"./configs": "./src/configs.ts",
 		"./funcdefs": "./src/funcdefs.ts",
+		"./props": "./src/props.ts",
 		"./typedefs": "./src/typedefs.ts"
 	},
 	"publish": {

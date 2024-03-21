@@ -41,6 +41,29 @@ await dntBuild({
 	esModule: true,
 	scriptModule: false,
 	test: false,
+	mappings: Object.fromEntries([
+		// TODO: ISSUE: `dnt` won't currently work with `jsr` imports, not until the following issue is resolved: https://github.com/denoland/dnt/issues/378
+		...["binder", "builtin_aliases_deps", "struct", "typedefs",].map((submodule_path) => {
+			return [
+				"jsr:@oazmi/kitchensink@0.7.5/" + submodule_path,
+				{
+					name: "@oazmi/kitchensink",
+					version: "0.7.5-a",
+					subPath: submodule_path,
+				}
+			]
+		}),
+		...["binder", "builtin_aliases_deps", "struct", "typedefs",].map((submodule_path) => {
+			return [
+				"jsr:@oazmi/tsignal@0.3.2/" + submodule_path,
+				{
+					name: "@oazmi/tsignal",
+					version: "0.3.2",
+					subPath: submodule_path,
+				}
+			]
+		}),
+	])
 })
 
 // copy other files

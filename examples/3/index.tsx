@@ -101,7 +101,7 @@ const change_time = <div style={object_to_css_inline_style({
 </div>
 
 document.getElementById("root")!.append(
-	<img src="./jotaro_kujo.jpg"></img>,
+	<img src="../assets/jotaro_kujo.jpg"></img>,
 	<div style={object_to_css_inline_style({
 		"display": "flex",
 		"flex-direction": "column",
@@ -118,7 +118,7 @@ document.getElementById("root")!.append(
 		}} />
 		{slow_down_time}
 	</div>,
-	<img src="./dio_brando.jpg"></img>,
+	<img src="../assets/dio_brando.jpg"></img>,
 )
 export { getCurrentTime, idCurrentTime, setCurrentTime }
 

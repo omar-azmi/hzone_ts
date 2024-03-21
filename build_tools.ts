@@ -10,7 +10,7 @@ import { denoPlugins } from "jsr:@luca/esbuild-deno-loader@0.9.0"
 import { ensureDir } from "jsr:@std/fs@0.218.2"
 import { join as pathJoin } from "jsr:@std/path@0.218.2"
 export { build as dntBuild } from "https://deno.land/x/dnt@0.40.0/mod.ts"
-export { copy as copyFolder, emptyDir, ensureDir, ensureFile } from "jsr:@std/fs@0.218.2"
+export { copy as copyDir, emptyDir, ensureDir, ensureFile, walk as walkDir } from "jsr:@std/fs@0.218.2"
 export { dirname as pathDirname, join as pathJoin } from "jsr:@std/path@0.218.2"
 
 

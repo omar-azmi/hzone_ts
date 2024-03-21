@@ -1,7 +1,7 @@
-export { Context, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
-export type { Accessor } from "jsr:@oazmi/tsignal"
+export { Context, EffectSignal_Factory } from "jsr:@oazmi/tsignal@0.3.2"
+export type { Accessor } from "jsr:@oazmi/tsignal@0.3.2"
 export { DynamicStylable, VanillaComponentRender } from "../vanilla/mod.ts"
-import type { Accessor, EffectSignal_Factory } from "jsr:@oazmi/tsignal"
+import type { Accessor, EffectSignal_Factory } from "jsr:@oazmi/tsignal@0.3.2"
 import { StyleProps } from "../props.ts"
 
 

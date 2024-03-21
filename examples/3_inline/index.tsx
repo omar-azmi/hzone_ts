@@ -91,7 +91,7 @@ const change_time = <div style={{
 </div>
 
 document.getElementById("root")!.append(
-	<img src="../3/jotaro_kujo.jpg"></img>,
+	<img src="../assets/jotaro_kujo.jpg"></img>,
 	<div style={{
 		display: "flex",
 		flexDirection: "column",
@@ -104,7 +104,7 @@ document.getElementById("root")!.append(
 		<Clock attr:style="align-self: center;" {...{ getTime }} />
 		{slow_down_time}
 	</div>,
-	<img src="../3/dio_brando.jpg"></img>,
+	<img src="../assets/dio_brando.jpg"></img>,
 )
 export { getCurrentTime, idCurrentTime, setCurrentTime }
 

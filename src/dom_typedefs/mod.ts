@@ -32,4 +32,3 @@ export type IntrinsicSVGElements_Factory<
 		& TagPropsMap[TagName]
 		& Partial<Record<SVGTagNameAttributesMap[TagName], AttributeType>>
 	}
-

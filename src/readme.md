@@ -132,13 +132,16 @@ document.body.append(my_button)
 /src/vanilla/*.ts   source files `VanillaComponentRender` and its derivatives.
 /src/tsignal/*.ts   source files `TsignalComponentRender` and its derivatives,
                     for using with `jsr:@oazmi/tsignal` reactive signals library.
+/src/solid/*.ts     source files `SolidComponentRender` and its derivatives,
+                    for using with `npm:solid-js` reactive library, without the
+                    need for using `npm:solid-js/web`.
 /src/dom_typedefs/  contains information for html and svg attributes,
                     for typescript autocomplete.
 /src/configs.ts     each "framework" must have its component constructor's
                     configurations options saved in here.
 /src/props.ts       exports the symbols for symbol props, and the name-prefixes for
                     inline props, in addition to the `Props` interface that must be
-					accepted by all components.
+                    accepted by all components.
 /src/typedefs.ts    useful types for abstraction.
 /test/*.ts          test files.
 ```

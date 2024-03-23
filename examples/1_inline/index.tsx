@@ -2,7 +2,7 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { InlineHyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaSVGElementRender } from "../../src/mod.ts"
+import { InlineHyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaSVGRender } from "../../src/mod.ts"
 import { TsignalInlineComponentProps, TsignalHTMLRender } from "../../src/tsignal/mod.ts"
 
 
@@ -25,7 +25,7 @@ const {
 	]
 })
 
-const svg_renderer = new VanillaSVGElementRender()
+const svg_renderer = new VanillaSVGRender()
 
 type MyDivProps = TsignalInlineComponentProps<{ width?: number, height?: number }>
 const MyDiv = ({ width = 100, height = 50 }: MyDivProps = {}) => {

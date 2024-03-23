@@ -186,7 +186,7 @@ export class VanillaHTMLRender extends VanillaComponentRender<typeof HTMLTagComp
  * > [!IMPORTANT]
  * > note that svg attributes are case sensitive, most notably the "viewBox" and "preserveAspectRatio" attributes must have the exact casing.
 */
-export class VanillaSVGElementRender extends VanillaComponentRender<typeof SVGTagComponent> {
+export class VanillaSVGRender extends VanillaComponentRender<typeof SVGTagComponent> {
 	test(tag: any, props?: any): boolean { return typeof tag === "string" }
 
 	// @ts-ignore: we are breaking subclassing inheritance rules by having `tag: string` as the first argument instead of `component: ComponentGenerator`

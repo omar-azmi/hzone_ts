@@ -1,3 +1,9 @@
+/** exports the symbols for {@link DefaultProps | symbol props}, and the name-prefixes for {@link InlineDefaultProps | inline props},
+ * in addition to the {@link Props | `Props`} interface that must be accepted by all components generators.
+ * 
+ * @module
+*/
+
 import { DEBUG, HTMLEventNames, PreserveStringKeyAndValues, object_assign, object_entries, object_fromEntries } from "./deps.ts"
 import type { InlineHyperZone } from "./hzone/mod.ts"
 import type { ComponentGenerator } from "./typedefs.ts"

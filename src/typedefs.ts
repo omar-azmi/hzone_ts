@@ -1,3 +1,8 @@
+/** useful types for abstraction. <br>
+ * 
+ * @module
+*/
+
 import type { HyperZoneConfigs } from "./configs.ts"
 import { DEBUG, bindMethodToSelfByName } from "./deps.ts"
 import type { HyperZone } from "./hzone/mod.ts"

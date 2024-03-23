@@ -1,6 +1,6 @@
 import type { HyperZoneConfigs, hzone_Config } from "../configs.ts"
 import { DEBUG, console_error } from "../deps.ts"
-import { inlinePropsRemapper } from "../props.ts"
+import { DefaultProps, InlineDefaultProps, inlinePropsRemapper } from "../props.ts"
 import { Fragment, HyperRender } from "../typedefs.ts"
 
 
@@ -13,6 +13,12 @@ const
 	node_only_child_filter = (child: symbol | Node) => (typeof child !== "symbol")
 
 
+/** allows you to create a composite renderer that conditionally executes whichever renderer (in the current zone)
+ * that passes the {@link HyperRender.test | `HyperRender.test(tag, props)`} method first. <br>
+ * to move to a new zone of renderers, simply call the {@link pushZone | `pushZone`} method with the new renderers as the arguments. <br>
+ * and once you are done with that collection of renderers, call {@link popZone | `popZone`} to move back to your previous zone.
+ * (think of it like a stack).
+*/
 export class HyperZone extends HyperRender<any, any> {
 	protected zones: Array<HyperRender[]> = []
 	public configs: HyperZoneConfigs = {}
@@ -81,6 +87,52 @@ export class HyperZone extends HyperRender<any, any> {
 	}
 }
 
+/** a subclass of {@link HyperZone | `HyperZone`}, which allows for the use of {@link InlineDefaultProps | inlined standard props},
+ * instead of using the less friendly {@link DefaultProps | symbolic standard props}. <br>
+ * this subclass simply remapps the inlined props into their symbolic version, and passes the output to the super class.
+ * 
+ * ### comparison:
+ * 
+ * #### inline:
+ * ```tsx
+ * <div
+ *     some-attr="abc"
+ *     some-other-attr="abc"
+ *     on:click={(event) => {
+ *         console.log("div clicked")
+ *     }}
+ * ></div>
+ * ```
+ * 
+ * #### symbolic:
+ * ```tsx
+ * <div
+ *     some-attr="abc"
+ *     some-other-attr="abc"
+ *     {...{ [EVENTS]: {
+ *         click: (event) => {
+ *             console.log("div clicked")
+ *         }
+ *     }}}
+ * ></div>
+ * ```
+ * 
+ * #### difference:
+ * ```diff
+ * <div
+ *     some-attr="abc"
+ *     some-other-attr="abc"
+ * -   {...{ [EVENTS]: {
+ * -   click:
+ * +   on:click={
+ *         (event) => {
+ *             console.log("div clicked")
+ *         }
+ * +   }
+ * -   }}}
+ * ></div>
+ * ```
+*/
 export class InlineHyperZone extends HyperZone {
 	h(tag: typeof Fragment, props: null, ...children: HyperZoneChildren): Element[]
 	h(tag: any, props: any, ...children: HyperZoneChildren): Element

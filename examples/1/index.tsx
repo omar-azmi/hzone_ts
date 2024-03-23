@@ -2,7 +2,7 @@
 /** @jsxFrag Fragment */
 
 import { Context, MemoSignal_Factory, StateSignal_Factory } from "jsr:@oazmi/tsignal"
-import { ATTRS, EVENTS, HyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaSVGElementRender } from "../../src/mod.ts"
+import { ATTRS, EVENTS, HyperZone, VanillaComponentRender, VanillaFragmentRender, VanillaSVGRender } from "../../src/mod.ts"
 import { TsignalHTMLRender } from "../../src/tsignal/mod.ts"
 
 
@@ -25,7 +25,7 @@ const {
 	]
 })
 
-const svg_renderer = new VanillaSVGElementRender()
+const svg_renderer = new VanillaSVGRender()
 
 const MyDiv = ({ width = 100, height = 50 } = {}) => {
 	const [, getTime, setTime] = createState(Date.now() / 1000)

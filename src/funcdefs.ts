@@ -1,3 +1,8 @@
+/** utility functions used mostly for stringification of various objects. <br>
+ * 
+ * @module
+*/
+
 import { Props } from "./props.ts"
 import { AttrValue, Stringifiable } from "./typedefs.ts"
 

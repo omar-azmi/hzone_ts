@@ -14,7 +14,7 @@ const docs_output_dir = "./docs/"
 const docs_src_output_dir = "./docs/src/"
 const docs_dist_output_dir = "./docs/dist/"
 const example_files_dir = "./examples/"
-const extra_directories_to_copy = [
+const extra_directories_to_copy: string[] = [
 	"./examples/assets/",
 ]
 
@@ -83,7 +83,7 @@ await copyDir("./src/", docs_src_output_dir, { overwrite: true })
 // assuming `site_root` is the root url of the hosted site, `${site_root}/dist/*.js` will contain various bundled javascript distributions
 const
 	js_dist = (await doubleCompileFiles("./src/mod.ts", docs_dist_output_dir, {}, { minify: false }, false))[0],
-	js_dist_minified = (await doubleCompileFiles("./src/mod.ts", docs_dist_output_dir, {}, { minify: true }))[0]
+	js_dist_minified = (await doubleCompileFiles("./src/mod.ts", docs_dist_output_dir, {}, { minify: true }, false))[0]
 js_dist.path = pathJoin(pathDirname(js_dist.path), "./esm.js")
 js_dist_minified.path = pathJoin(pathDirname(js_dist_minified.path), "./esm.min.js")
 const output_dist_files = [js_dist, js_dist_minified]

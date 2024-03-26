@@ -26,6 +26,7 @@
 		"exclude": [
 			"./.vscode/",
 			"./.github/",
+			"./examples/",
 			"./test/",
 			"./build*.ts",
 			"./clean.ts"
@@ -57,10 +58,7 @@
 		"allowJs": true
 	},
 	"package_json": {
-		"dependencies": {
-			"@oazmi/kitchensink": "^0.7.5-a",
-			"@oazmi/tsignal": "^0.3.2"
-		},
+		"dependencies": {},
 		"devDependencies": {
 			"typescript": "^5.0.0",
 			"esbuild": "^0.20.1"
